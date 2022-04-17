@@ -321,6 +321,39 @@ public class Main {
 - `\\D` : 숫자를 제외한 모든 문자
 - `\\W` : 글자를 제외한 모든 문자
 
+### 📝 정규 표현식을 사용해 풀어본 문제
+[Programmers - 튜플](https://programmers.co.kr/learn/courses/30/lessons/64065)
+
+```java
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+class Solution {
+    // 개수로 정렬하고, 첫번째 요소의 값을 튜플의 첫 요소로 삽입,
+    // 이후 정렬된 배열을 순차적으로 돌면서, 이미 튜플에 넣은 값이 아닌 값이 나오면 튜플에 삽입, 반복
+    public int[] solution(String s) {
+        Map<Integer, Integer> map = new HashMap<>();
+
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(s);
+
+        while(matcher.find()) {
+            int num = Integer.parseInt(matcher.group(0));
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+
+        ArrayList<Integer> tuple = new ArrayList<>(map.keySet());
+        tuple.sort((value1, value2) -> (map.get(value2).compareTo(map.get(value1))));
+
+        return tuple.stream().mapToInt(i -> i).toArray();
+    }
+}
+```
+
+- 원래는 문자열을 하나하나 파싱하고, 튜플을 저장한 배열에 값이 있는지 없는지 확인해가면서 구현했었다.
+- 코드가 너무 지저분한 것 같고, 좀 더 효율적인 방법이 없을까 고심하다가 배운 정규 표현식이 떠올라 사용해봤고, 간결한 코드와 효율적인 메모리 사용으로 해결할 수 있었다.
+
 ## 📕 참고
 - [프로그래머스](https://programmers.co.kr/learn/courses/11)
 - [[Java] 자바 정규 표현식 (Pattern, Matcher) 사용법 & 예제](https://coding-factory.tistory.com/529)
