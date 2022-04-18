@@ -15,26 +15,26 @@ series: "💻 BackEnd"
 ### ✂️ 스프링 서버 준비
 우선, 배포할 스프링 서버가 필요하다. [start.io](https://start.spring.io/) 를 이용하여 생성한다.
 
-<img src="../../images/springServer.png" width="80%">
+<img src="../../images/Docker/springServer.png" width="80%">
 
 생성한 이후, 프로젝트가 정상적으로 동작하는지 한 번 실행해보도록 한다.
 
 이제 Docker에서 사용할 `jar` 파일을 빌드해본다. `build.gradle` 파일을 열어 파일의 빌드명을 지정해준다.
 
-<img src="../../images/jarName.png" width="40%">
+<img src="../../images/Docker/jarName.png" width="40%">
 
 - 위 경우는 `tabooDrug-0.0.1-SNAPSHOT.jar` 이라는 이름으로 `jar` 파일이 생성된다.
 
 이후 화면 오른쪽의 `Gradle` -> `Tasks` -> `build` -> `build.sh` 을 실행하여 프로젝트를 빌드한다.
 
-<img src="../../images/gradleBuild.png" width="70%">
+<img src="../../images/Docker/gradleBuild.png" width="70%">
 
 - 빌드가 완료됨을 터미널에서 확인한 후, `build` -> `libs` 디렉토리를 확인하면 `jar` 파일이 생성된 것을 확인할 수 있다.
 
 빌드된 `jar` 파일은 터미널에서 바로 실행할 수 있다. 
 - `java -jar tabooDrug-0.0.1-SNAPSHOT.jar` 명령어를 이용하여 실행해본다.
 
-<img src="../../images/executeJar.png">
+<img src="../../images/Docker/executeJar.png">
 
 이제 이 애플리케이션을 배포할 준비는 끝났고, Docker 컨테이너로 배포하기 위한 설정이 필요하다.
 
@@ -44,7 +44,7 @@ series: "💻 BackEnd"
 - `docker build` 를 통해 **docker image**를 생성하고,
 - 생성된 **docker image**를 통해 항상 같은 환경에서의 컨테이너를 구성한다.
 
-<img src="../../images/createDockerfile.png">
+<img src="../../images/Docker/createDockerfile.png">
 
 - `openjdk:11` 은 `openjdk11` 이 설치된 기본 OS 환경을 의미하고,
 - `EXPOSE 8080` 는 Host OS와 연결할 포트를 의미하고,
@@ -59,16 +59,16 @@ Docker를 백그라운드에서 실행시킨 이후(Docker Desktop 실행), `Doc
 docker build -t '로컬 레포지토리명' .
 ```
 
-<img src="../../images/dockerBuild.png">
+<img src="../../images/Docker/dockerBuild.png">
 
 성공적으로 빌드가 되었다면, `docker images` 로 이미지 목록을 확인하는 명령어로 확인할 수 있다.
 
-<img src="../../images/dockerImage.png" width="60%">
+<img src="../../images/Docker/dockerImage.png" width="60%">
 
 해당 이미지를 Docker 컨테이너에 올려본다.
 - 이제는 애플리케이션이 구동되는 환경이 Host OS가 아닌, Docker 엔진 위에 올라간 컨테이너이다.
 
-<img src="../../images/onContainer.png">
+<img src="../../images/Docker/onContainer.png">
 
 ### ✂️ Docker Hub 사용하기
 github처럼, Docker hub도 존재한다. hub에 생성한 이미지를 올려 다른 팀원들도 사용할 수 있도록 한다.
@@ -80,7 +80,7 @@ docker hub 홈페이지를 이용하는 방법도 있지만, IntelliJ에서 제�
 3. 이후, `Docker` -> `Images` 에서 금방 생성한 image를 확인할 수 있는데, 이를 우클릭하여 `Push Image...` 를 클릭한다.
 4. `Registry` , `Namespace` , `Repository` , `Tag` 를 입력하는데, `Registry` 를 생성하지 않았다면 생성한다. 모두 입력한 후 PUSH를 누르고, 잠시 기다린 후 Docker hub 홈페이지를 확인하면, 해당 `Registry` 에 올라간 것을 확인할 수 있다.
 
-<img src="../../images/dockerRegistry.png">
+<img src="../../images/Docker/dockerRegistry.png">
 
 이제 내가 올린 Docker image를 `docker pull` 명령어를 사용해 다운받아 사용할 수 있을 것이다.
 
