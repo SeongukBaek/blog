@@ -8,9 +8,9 @@ import Footer from "./Footer"
 const Article = styled.article`
     border-radius: 10px;
     box-shadow: 0 0 8px ${props => props.theme.colors.headerShadow};
-    padding: 15px 50px;
+    padding: 15px 30px;
     @media (max-width: 1300px) {
-        padding: 10px 0px;
+        padding: 10px 20px;
     }
 `
 
