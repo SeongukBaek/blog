@@ -325,6 +325,16 @@ void merge(int[] numbers, int left, int mid, int right) {
 
 ## 🧷 힙 정렬 (Heap Sort)
 
+---
+
+## 🧷 기수 정렬 (Radix Sort)
+
+---
+
+## 🧷 계수 정렬 (Counting Sort)
+
+---
+
 ## 📕 참고
 - [Tech Interview for developer](https://gyoogle.dev/blog/algorithm/Bubble%20Sort.html)
 - [JaeYeopHan/Interview_Question_for_Beginner](https://github.com/JaeYeopHan/Interview_Question_for_Beginner/tree/master/Algorithm)
