@@ -1,10 +1,10 @@
 ---
 title: "👩‍💻 67258. 보석 쇼핑"
 description: "알고리즘 문제 풀기"
-date: 2022-04-28
-update: 2022-04-28
+date: 2022-04-29
+update: 2022-04-29
 tags:
-  - 
+  - 두 포인터
 series: "👩‍💻 Programmers"
 ---
 
@@ -46,10 +46,41 @@ series: "👩‍💻 Programmers"
 ### 📍 **Logic**
 
 ```java
+while (true) {
+    // 아직 종류가 다 안 채워진 경우
+    if (gemTypes != gemMap.size()) {
+        if (right == gems.length) break;
+        else {
+            // 보석을 구매하는 경우로, Map에 개수를 증가시키면서 보석을 저장
+            gemMap.put(gems[right], gemMap.getOrDefault(gems[right], 0) + 1);
+            right++;
+        }
+    }
 
+    // 종류가 다 채워진 경우
+    if (gemTypes == gemMap.size()) {
+        // 이전까지 구한 구간의 길이와 비교하여 작다면 update
+        if (right - left < distance) {
+            distance = right - left;
+            start = left;
+            end = right;
+        }
+
+        // 구간 줄이기 위해 제일 앞 보석 1개 삭제
+        gemMap.put(gems[left], gemMap.get(gems[left]) - 1);
+
+        // 보석 개수가 0개이면 map에서 삭제
+        if (gemMap.get(gems[left]) == 0) gemMap.remove(gems[left]);
+
+        left++;
+    }
+}
 ```
 
-- 
+- `left` , `right` 라는 포인터를 사용하여 보석 진열대를 탐색한다.
+- 보석 진열대에 놓인 모든 종류의 보석을 하나 이상 구매한 경우와, 그렇지 않은 경우로 나눈다.
+  - 다 채워지지 않은 경우는 구매한 보석의 개수 정보를 업데이트하면서 `Map` 에 저장하고,
+  - 다 채워진 경우는 최소 구간인지 확인하고 시작점부터 보석 개수를 하나씩 줄인다.
 
 ### 📄 **CODE**
 
@@ -60,84 +91,58 @@ series: "👩‍💻 Programmers"
 	import java.util.*;
 
     class Solution {
-        long answer = 0;
-        ArrayList<Long> nums = new ArrayList<>();
-        ArrayList<Character> perm = new ArrayList<>();
-        StringBuilder operands = new StringBuilder();
-        
-        public long solution(String expression) {
-            StringBuilder tmp = new StringBuilder();
-            
-            for (int i = 0; i < expression.length(); i++) {
-                char ch = expression.charAt(i);
-                if (48 <= ch && ch <= 57) tmp.append(ch); 
-                else {
-                    nums.add((long) Integer.parseInt(String.valueOf(tmp)));
-                    if (!perm.contains(ch)) perm.add(ch);
-                    operands.append(ch);
-                    tmp.delete(0, tmp.length());
+        public int[] solution(String[] gems) {
+            // 보석의 위치를 저장할 Map
+            Map<String, Integer> gemMap = new HashMap<>();
+            // 진열대에 있는 보석을 중복 없이 저장한 Set
+            Set<String> gemSet = new HashSet<>(Arrays.asList(gems));
+
+            // 보석의 종류를 구하기 위해 Set 사용
+            int gemTypes = gemSet.size();
+
+            int distance = Integer.MAX_VALUE;
+            int start = 0, end = 0, left = 0, right = 0;
+
+            while (true) {
+                // 아직 종류가 다 안 채워진 경우
+                if (gemTypes != gemMap.size()) {
+                    if (right == gems.length) break;
+                    else {
+                        // 보석을 구매하는 경우로, Map에 개수를 증가시키면서 보석을 저장
+                        gemMap.put(gems[right], gemMap.getOrDefault(gems[right], 0) + 1);
+                        right++;
+                    }
+                }
+
+                // 종류가 다 채워진 경우
+                if (gemTypes == gemMap.size()) {
+                    // 이전까지 구한 구간의 길이와 비교하여 작다면 update
+                    if (right - left < distance) {
+                        distance = right - left;
+                        start = left;
+                        end = right;
+                    }
+
+                    // 구간 줄이기 위해 제일 앞 보석 1개 삭제
+                    gemMap.put(gems[left], gemMap.get(gems[left]) - 1);
+
+                    // 보석 개수가 0개이면 map에서 삭제
+                    if (gemMap.get(gems[left]) == 0) gemMap.remove(gems[left]);
+
+                    left++;
                 }
             }
-            nums.add((long) Integer.parseInt(String.valueOf(tmp)));
             
-            // 순열 생성
-            makePerm(0, perm.size(), perm.size());
-            
-            return answer;
-        }
-        
-        private void makePerm(int depth, int n, int r) {
-            if (depth == r) {
-                compute(n);
-                return;
-            }
-
-            for (int i = depth; i < n; i++) {
-                Collections.swap(perm, depth, i);
-                makePerm(depth + 1, n, r);
-                Collections.swap(perm, depth, i);
-            }
-        }
-        
-        private void compute(int n) {
-            ArrayList<Long> numbers = new ArrayList<>(nums);
-            // 연산자 임시 배열이 필요
-            // string은 각 문자별 위치 조회가 가능하지만, 요소 삭제가 안됨
-            // arrayList는 요소 삭제가 용이하지만, 위치 조회가 안됨
-            StringBuilder tmpOps = new StringBuilder(operands);
-
-            for (char p : perm) {
-                int idx = tmpOps.indexOf(String.valueOf(p));
-                while(idx != -1) {
-                    long n1 = numbers.get(idx);
-                    long n2 = numbers.get(idx+1);
-
-                    numbers.set(idx, calculator(n1,n2,p));
-                    numbers.remove(idx+1);
-                    tmpOps.deleteCharAt(idx);
-
-                    idx = tmpOps.indexOf(String.valueOf(p));
-                }
-            }
-
-            long sum = Math.abs(numbers.get(0));
-            if (answer < sum) answer = sum;
-        }
-        
-        private long calculator(long n1, long n2, char op) {
-            return switch (op) {
-                case '-' -> n1 - n2;
-                case '+' -> n1 + n2;
-                case '*' -> n1 * n2;
-                default -> 0;
-            };
+            return new int[] {start + 1, end};
         }
     }
   	</div>
 </details>
 
 ### ✏️ **Review**
-- 
+- 두 포인터를 사용해야 하는 문제임은 바로 알 수 있었지만, 두 포인터를 사용하지 않고 각 보석들의 위치를 저장하고 이 위치 정보만을 사용해서 풀 방법은 없을까를 고민해보았다.
+- 두 포인터 알고리즘을 사용하는 가장 흔한 예가 부분 배열 합을 구하는 문제였는데, 이를 여기에 어떻게 접목시키는지 의문이었다.
+- 두 포인터 알고리즘이 고냥이 문제에도 사용되던데, 한 번 혼자 풀어봐야겠다...
 
 ### 📕 출처
 Programmers : https://programmers.co.kr/learn/courses/30/lessons/67258
