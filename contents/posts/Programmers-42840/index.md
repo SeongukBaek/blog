@@ -52,7 +52,7 @@ private int countScore(int[] answers, int[] std) {
   <summary>코드 보기/접기💫</summary>
     <div markdown="1">
 
-	iimport java.util.*;
+	import java.util.*;
 
     class Solution {
         public int[] solution(int[] answers) {
