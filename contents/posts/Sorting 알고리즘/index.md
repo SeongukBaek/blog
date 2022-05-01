@@ -16,7 +16,7 @@ series: "💡 Algorithm"
 `Bubble Sort`, `Selection Sort`, `Insertion Sort`, `Quick Sort`, `Merge Sort`, `Heap Sort`
 
 ## 🧷 Non-Comparisons 방식 알고리즘
-`Counting Sort`, `Raidx Sort`
+`Counting Sort`, `Radix Sort`
 
 > **Stable sort**
 > : 중복된 키를 순서대로 정렬하는 정렬 방식이다. 즉, 값이 같은 원소가 있어도 정렬 시 그 순서를 보장하는 방식이다.
@@ -316,6 +316,7 @@ void merge(int[] numbers, int left, int mid, int right) {
 ### 🪚 단점
 - 추가적인 메모리 공간이 더 필요하다.
   - In-place sort이 아니다.
+  - `LinkedList` 를 사용하면 In-place 하게 할 수 있다.
 
 |Time Complexity|Space Complexity|
 |:---:|:---:|
