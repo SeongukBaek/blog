@@ -395,11 +395,67 @@ void heapify(int[] array, int n, int i) {
 
 ---
 
-## 🧷 기수 정렬 (Radix Sort)
+> 아래 2가지의 정렬 알고리즘은 비교를 수행하지 않는 **`non-Comparisons Sorting Algorithm`** 이다.
 
+## 🧷 기수 정렬 (Radix Sort)
+데이터를 구성하는 기본 요소(기수: Radix)를 이용하는 정렬 방식
+- 하나의 기수마다 하나의 버킷을 생성하고 분류한 뒤, 버킷 안에서 다시 정렬을 수행한다.
+- LSD(Least Significant Digit) 방식과 MSD(Most Significant Digit) 방식이 있다.
+  - LSD 방식은 덜 중요한 숫자부터 정렬하는 방식으로, 일의 자리부터 정렬한다.
+  - MSD 방식은 중요한 숫자부터 정렬하는 방식으로, 가장 큰 자릿수부터 정렬한다.
+
+> 입력 데이터의 최댓값에 따라 정렬하는 `Counting Sort` 의 비효율성을 개선하기 위해 사용 가능
+ 
 ---
 
 ## 🧷 계수 정렬 (Counting Sort)
+말 그대로, 몇 개인지 개수를 세어 정렬하는 방식이다.
+- 주어진 데이터 중 가장 큰 값을 size로 하는 배열을 생성한다.
+- 배열을 탐색하며, 데이터의 등장 횟수를 해당 index에 저장한다.
+- 이후 완성된 등장 횟수 배열을 누적합으로 변경한다.
+- 주어진 데이터 배열을 뒤에서부터 탐색하며, `등장 횟수 배열[주어진 데이터 배열의 값]` 에 해당 숫자를 위치시킨다.
+  - 그리고 누적합 배열의 값을 1씩 감소시킨다.
+
+<img src="https://t1.daumcdn.net/cfile/tistory/22538A4D56D2FFBA2E" width="80%">
+
+<img src="https://t1.daumcdn.net/cfile/tistory/23057D4956D2FFE314" width="80%">
+
+```java
+void countingSort(int[] numbers) {
+  int[] sortedArr = new int[numbers.length];
+  int[] counting = new int[Arrays.stream(numbers).max().getAsInt() + 1];
+
+  // 등장 횟수 계산
+  for (int num : numbers)
+    counting[num]++;
+
+  // 누적합 계산
+  for (int i = 1; i < counting.length; i++)
+    counting[i] += counting[i - 1];
+
+  // 누적합 배열과 주어진 데이터를 이용해 정렬 수행
+  for (int i = numbers.length - 1; i >= 0; i--) {
+    sortedArr[counting[numbers[i]] - 1] = numbers[i];
+    counting[numbers[i]]--;
+  }
+
+  System.out.println(Arrays.toString(sortedArr));
+}
+```
+
+### 🪚 장점
+- 최선의 경우 $O(N)$의 시간 복잡도를 가져, 가장 빠른 정렬 알고리즘이다.
+- Stable sort
+- 정렬할 데이터가 특정한 범위 안에 있는 경우 자주 사용한다.
+  - 대표적으로는 26개의 알파벳으로 이루어진 문자열에서 `Suffix Array` 를 얻는 경우이다.
+
+### 🪚 단점
+- 데이터의 최댓값에 해당하는 만큼의 추가적인 메모리 공간이 필요하기에(누적합 배열에 접근하는 시간을 $O(1)$로 하기 위해) 대부분의 경우 엄청난 **메모리 낭비**를 야기할 수 있다.
+  - 만약 주어진 데이터의 값 범위가 너무 큰 경우, 사용하지 않는 메모리 공간의 낭비도 발생하게 된다.
+
+|Time Complexity|Space Complexity|
+|:---:|:---:|
+|$O(N)$|$O(N)$|
 
 ---
 
@@ -409,3 +465,4 @@ void heapify(int[] array, int n, int i) {
 - [[알고리즘 개념] Stable Sort &Inplace](https://velog.io/@cookncoding/%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98-%EA%B0%9C%EB%85%90-Stable-Sort-Inplace)
 - [양방향 버블 정렬](https://hevton.tistory.com/192)
 - [[Dual-Pivot Quick Sort] 두 개의 피봇으로 퀵 정렬](https://cs-vegemeal.tistory.com/53)
+- [Counting Sort : 계수 정렬](https://bowbowbow.tistory.com/8)
