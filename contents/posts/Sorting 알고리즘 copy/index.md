@@ -2,7 +2,7 @@
 title: "💡 Sorting 알고리즘"
 description: "개발 상식"
 date: 2022-04-24
-update: 2022-05-05
+update: 2022-04-24
 tags:
   - 개발상식
   - Java
