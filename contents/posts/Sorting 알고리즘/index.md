@@ -407,11 +407,13 @@ void heapify(int[] array, int n, int i) {
 > 입력 데이터의 최댓값에 따라 정렬하는 `Counting Sort` 의 비효율성을 개선하기 위해 사용 가능하다.
 > - 자릿수의 값 별로 정렬을 하기에 나올 수 있는 값의 최대 사이즈는 9이다.
 
+<img src="https://blog.kakaocdn.net/dn/DWH0S/btqFOYnIbCu/Q7HOAOzzvlD4xW279LqTLK/img.gif" width="80%">
+
 ```java
 void countSort(int[] arr, int n, int exp) {
-	int buffer[n];
-  int i = 0;
+	int[] buffer = new int[n];
   int[] count = new int[10];
+  int i = 0;
   
   // exp의 자릿수에 해당하는 count 증가
   for (i = 0; i < n; i++) {
@@ -523,3 +525,4 @@ void countingSort(int[] numbers) {
 - [양방향 버블 정렬](https://hevton.tistory.com/192)
 - [[Dual-Pivot Quick Sort] 두 개의 피봇으로 퀵 정렬](https://cs-vegemeal.tistory.com/53)
 - [Counting Sort : 계수 정렬](https://bowbowbow.tistory.com/8)
+- [기수 정렬-Radix Sort](https://herong.tistory.com/entry/%EA%B8%B0%EC%88%98%EC%A0%95%EB%A0%ACRidix-Sort?category=818669)
