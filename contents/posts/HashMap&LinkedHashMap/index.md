@@ -72,11 +72,10 @@ static final int hash(Object key) {
   int h;
   return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
 }
-
-
 ```
 - `put` 을 할 때, `hash()` 메소드를 사용해 `hash` 된 key을 이용해 저장하고 있다.
 - `hash()` 메소드에서 사용하는 `key.hashCode()` 가 어떤 값을 리턴할 지 알 수 없기에 `HashMap` 은 순서를 보장해주지 못한다.
+- 하지만 `LinkedHashMap` 은 내부적으로 **Doubly-Linked List**를 유지하기에 순서를 보장할 수 있다.
 
 ## 📕 참고
 - [Class HashMap](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html)

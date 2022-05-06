@@ -44,7 +44,7 @@ private void dfs(int[] numbers, int idx, int target, int sum) {
 }
 ```
 
-- 재귀적인 DFS를 이용해 다음 number를 더하거나 뺴면서 맨 마지막 값이 타겟 넘버와 같은 경우 answer를 증가한다.
+- 재귀적인 DFS를 이용해 다음 number를 더하거나 빼면서 맨 마지막 값이 타겟 넘버와 같은 경우 answer를 증가한다.
 - 첫 번째 숫자가 양수인 경우와 음수인 경우 두 가지에 대해 dfs를 호출한다.
 
 ### 📄 **CODE**
