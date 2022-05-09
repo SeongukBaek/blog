@@ -8,7 +8,7 @@ tags:
   - Java
   - IoC
   - DI
-series: "💬 BackEnd"
+series: "💻 BackEnd"
 ---
 
 ## 🧷 IoC

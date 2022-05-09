@@ -36,18 +36,21 @@ series: "💡 Algorithm"
 아래 2가지 방법이 있고, 두 방법 모두 최악의 경우 $O(M)$의 시간 복잡도를 가진다.
 
 1. **Open Address 방식 (개방 주소법)**
-충돌 현상이 발생하면, (즉, 이미 해당 해시 버킷이 사용 중인 경우) **다른 해시 버킷에 삽입하려는 데이터를 삽입**하는 방식이다.
+: 충돌 현상이 발생하면, (즉, 이미 해당 해시 버킷이 사용 중인 경우) **다른 해시 버킷에 삽입하려는 데이터를 삽입**하는 방식이다.
 - 이때, 데이터를 저장하기 위해 비어 있는 다른 해시 버킷을 찾아 헤맨다. 
 - 최악의 경우, 비어 있는 해시 버킷을 찾지 못해 다시 탐색을 시작한 위치로 돌아올 수 있다. 이때 탐색하는 데도 아래 3가지 방법이 있다.
   - **Linear Probing**: 순차적으로 탐색하는 방식
-  - **Quadratic Probing**: 2차 함수를 이용해 탐색할 위치를 찾는다.
-  - **Double Hashing Probing**: 하나의 해시 함수에서 충돌이 발생하면 2차 해시 함수를 사용해 새로운 해시 값을 할당한다. 가장 많은 연산을 요구한다.
+    - Primary Clustering에 취약하다.
+  - **Quadratic Probing**: 2차 함수를 이용해 탐색할 위치를 찾는다. ($1^2$, $2^2$, $3^2$, ... 으로 탐색위치 증가)
+    - Secondary Clustering에 취약하다.
+  - **Double Hashing Probing**: 하나의 해시 함수에서 충돌이 발생하면 2차 해시 함수를 사용해 탐사 이동폭을 얻어 다른 버킷을 탐색한다.
+    - 두 취약점을 해결하지만, 가장 많은 연산을 요구한다.
 
 > **해시 버킷**?
 > : 데이터를 저장하기 위한 공간
 
 2. **Separate Chaining 방식 (분리 연결법)**
-일반적으로 Open Address방식은 Separate Chaining보다 느리다. Open Address의 경우 해시 버킷을 채운 밀도가 높아질수록 최악의 경우가 발생할 빈도가 높아지기 때문이다. 반면, Separate Chaining 방식은 보조 해시 함수를 사용해 잘 조정한다면 최악의 경우에 가까워지는 빈도를 줄일 수 있다. Separate Chaining 방식은 2가지 구현 방식이 있다.
+: 일반적으로 Open Address방식은 Separate Chaining보다 느리다. Open Address의 경우 해시 버킷을 채운 밀도가 높아질수록 최악의 경우가 발생할 빈도가 높아지기 때문이다. 반면, Separate Chaining 방식은 보조 해시 함수를 사용해 잘 조정한다면 최악의 경우에 가까워지는 빈도를 줄일 수 있다. Separate Chaining 방식은 2가지 구현 방식이 있다.
 
 > Java 7에서는 Separate Chaining 방식을 사용해 `HashMap` 을 구현한다.
 
@@ -75,7 +78,7 @@ series: "💡 Algorithm"
 ### 🪚 해시 버킷 동적 확장 (Resize)
 해시 버킷의 개수가 적다면 메모리 사용을 아낄 수 있지만 해시 충돌로 인해 성능 상 손실이 발생한다.
 - 그래서 `HashMap` 은 `key-value` 쌍의 개수가 일정 이상이 되면, 해시 버킷의 개수를 두 배로 늘린다. 개수를 늘림으로써, 충돌로 인한 성능 손실 문제를 어느 정도 해결할 수 있다.
-  - 여기서 일정 이상의 의미는 현재 데이터의 개수가 해시 버킷의 개수의 **75%**가 될 때이다. 
+  - 여기서 일정 이상의 의미는 현재 데이터의 개수가 해시 버킷의 개수의 **75%** 가 될 때이다. 
   - `0.75` 라는 숫자는 **load factor**로 불린다.
 
 ### 🪚 예제 문제
@@ -103,8 +106,83 @@ OK
 - N값은 최대 10만이므로, 이를 완전 탐색으로 해결한다면 $O(N^2)$의 시간복잡도를 가져, 100억번의 연산이 필요하다. 이는 곧바로 시간초과로 이어질 것이다.
 - 따라서 **해시 테이블**을 이용해 해결해야 한다. 
   - 입력된 문자열 값을 해시 키로 변환시켜 저장하면서 진행한다.
+
+```java
+public class Solution {
+  static final int HASH_SIZE = 1000;
+  static final int HASH_LEN = 400;
+  static final int HASH_VAL = 17; // 소수로 할 것, 주로 17, 19, 23
+  static String str;
+  static int N;
+	
+  static int[][] data = new int[HASH_SIZE][HASH_LEN];
+  static int[] length = new int[HASH_SIZE];
+  static String[][] s_data = new String[HASH_SIZE][HASH_LEN];
+
+  public static void main(String[] args) throws Exception {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    StringBuilder sb = new StringBuilder();
+		
+    N = Integer.parseInt(br.readLine()); // 입력 수 (1 ~ 100000)
+		
+    for (int i = 0; i < N; i++) {
+      str = br.readLine();
+			
+      // 입력 문자열로부터 키 값을 생성
+      int key = getHashKey(str);
+
+      // 해당 키 값이 이미 존재하는지 확인
+      int cnt = checking(key);
+
+      // 이미 들어왔던 문자열
+      if(cnt != -1)	sb.append(str).append(cnt).append("\n");
+      else sb.append("OK").append("\n");
+      }
+		
+    System.out.println(sb.toString());
+  }
+  
+  public static int getHashKey(String str) {		
+    int key = 0;
+		
+    // 키 값 생성 (HASH_VAL 사용)
+    for (int i = 0; i < str.length(); i++)
+      key = (key * HASH_VAL) + str.charAt(i) + HASH_VAL;
+
+    // 키 값 양수로 변환
+    if(key < 0) key = -key; 
+		
+    return key % HASH_SIZE;	
+  }
+
+  public static int checking(int key) {	
+    // 현재 키에 담긴 수
+    int len = length[key]; 
+
+    // 이미 들어온 적 있음
+    if(len != 0) {
+      // 이미 들어온 문자열이 해당 키 배열에 있는지 확인
+      for (int i = 0; i < len; i++) { 
+        if(str.equals(s_data[key][i])) {
+          // 있다면 들어온 수를 반환
+          data[key][i]++;
+          return data[key][i];
+        }
+      }
+    }
+    
+    // 들어온 적이 없었으면 해당 키 배열에 문자열을 저장하고 길이 1 늘리기
+    s_data[key][length[key]++] = str;
+    
+    // 들어온 적 없었다면 -1 반환
+    return -1;
+  }
+}
+```
+
 ---
 
 ## 📕 참고
 - [Tech Interview for developer](https://gyoogle.dev/blog/algorithm/Bubble%20Sort.html)
 - [JaeYeopHan/Interview_Question_for_Beginner](https://github.com/JaeYeopHan/Interview_Question_for_Beginner/tree/master/DataStructure#hash-table)
+- [해싱, 해시함수, 해시테이블](https://ratsgo.github.io/data%20structure&algorithm/2017/10/25/hash/)
