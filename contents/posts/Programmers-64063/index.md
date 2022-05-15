@@ -22,9 +22,9 @@ private long getRoom(long room) {
     }
 
     // 해당 방이 이미 배정된 경우, 재귀 호출을 통해 빈 방을 찾는다.
-    long nextRoom = roomMap.get(room);
-    long emptyRoom = getRoom(nextRoom);
+    long emptyRoom = getRoom(roomMap.get(room));
     roomMap.put(room, emptyRoom);
+    
     return emptyRoom;
 }
 ```
@@ -45,9 +45,8 @@ private long getRoom(long room) {
         public long[] solution(long k, long[] room_number) {
             long[] answer = new long[room_number.length];
 
-            for (int i = 0; i < room_number.length; i++) {
+            for (int i = 0; i < room_number.length; i++)
                 answer[i] = getRoom(room_number[i]);
-            }
             
             return answer;
         }
@@ -60,9 +59,9 @@ private long getRoom(long room) {
             }
 
             // 해당 방이 이미 배정된 경우, 재귀 호출을 통해 빈 방을 찾는다.
-            long nextRoom = roomMap.get(room);
-            long emptyRoom = getRoom(nextRoom);
+            long emptyRoom = getRoom(roomMap.get(room));
             roomMap.put(room, emptyRoom);
+            
             return emptyRoom;
         }
     }
