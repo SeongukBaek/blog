@@ -10,7 +10,7 @@ series: "👩‍💻 Programmers"
 ---
 
 ## 문제
-[Programmers - 시험장 나누기](https://programmers.co.kr/learn/courses/30/lessons/64064)
+[Programmers - 불량 사용자](https://programmers.co.kr/learn/courses/30/lessons/64064)
 
 ### 📍 **Logic**
 
