@@ -1,8 +1,8 @@
 ---
 title: "💡 비트마스크(BitMask)"
 description: "개발 상식"
-date: 2022-05-15
-update: 2022-05-15
+date: 2022-05-16
+update: 2022-05-16
 tags:
   - 개발상식
   - Java
