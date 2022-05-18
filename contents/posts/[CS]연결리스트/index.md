@@ -106,5 +106,5 @@ class Main {
 ---
 
 ## 📕 참고
-- [Tech Interview for developer](https://gyoogle.dev/blog/algorithm/Bubble%20Sort.html)
-- [JaeYeopHan/Interview_Question_for_Beginner](https://github.com/JaeYeopHan/Interview_Question_for_Beginner/tree/master/Algorithm)
+- [Tech Interview for developer](https://gyoogle.dev/blog/computer-science/data-structure/Linked%20List.html)
+- [JaeYeopHan/Interview_Question_for_Beginner](https://github.com/JaeYeopHan/Interview_Question_for_Beginner/tree/master/DataStructure#array-vs-linked-list)
