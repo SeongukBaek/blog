@@ -45,8 +45,6 @@ public boolean checkBlocks() {
 ```
 - 사라질 블록이 아니고, 4개의 블록쌍을 이룬다면, 해당 좌표들의 `check` 를 `true` 로 바꿔 후에 사라질 것임을 저장한다.
 
-
-
 ### 📄 **CODE**
 
 <details>
