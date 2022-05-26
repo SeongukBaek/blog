@@ -209,9 +209,137 @@ private void delete(Node cur, String str, int idx) {
 }
 ```
 
+> 실제로는 `HashMap` 을 사용해 구현하는 것이 더 효율적이다. 아래는 이를 사용한 구현이다.
+
+**클래스 생성**
+- `TrieNode` 는 자식노드 맵과 `isLastChar` 를 가지고 있다.
+- `isLastChar` 는 'DEV'라는 단어에서 [D], [E]는 마지막 글자가 아니지만 [V]는 마지막 글자로, 한 단어가 완성되는 시점임을 알 수 있도록 하는 값이다.
+
+```java
+public class TrieNode {
+	private Map<Character, TrieNode> childNodes = new HashMap<>();
+	// 마지막 글자 여부
+	private boolean isLastChar;
+
+	// 자식 노드 맵 Getter
+	Map<Character, TrieNode> getChildNodes() {
+		return this.childNodes;
+	}
+
+	// 마지막 글자인지 여부 Getter
+	boolean isLastChar() {
+		return this.isLastChar;
+	}
+
+	// 마지막 글자인지 여부 Setter
+	void setIsLastChar(boolean isLastChar) {
+		this.isLastChar = isLastChar;
+	}
+}
+```
+
+- Trie는 기본적으로 **빈 문자열을 가지는 루트 노드**만 가지고 있다.
+- 이 후에 나올 `insert()` 를 통해 단어를 넣어 그에 맞게 자식 노드가 생성된다.
+
+```java
+public class Trie {
+	private TrieNode rootNode;
+
+	public Trie() {
+		rootNode = new TrieNode();
+	}
+}
+```
+
+**insert**
+- 입력받은 단어의 각 알파벳을 계층구조의 자식 노드로 만들어 넣는다.
+  - 이미 같은 알파벳이 존재하면 공통 접두어까지는 생성하지 않는다.
+- 즉, 해당 계층 문자의 자식 노드가 존재하지 않을 때만 자식 노드를 생성해준다.
+- 이후 마지막 글자에는 "여기까지를 끝으로 하는 단어가 존재한다"는 표시를 위해 `isLastChar` 를 `true` 로 해준다.
+
+```java
+void insert(String word) {
+	TrieNode thisNode = this.rootNode;
+
+	for (int i = 0; i < word.length(); i++) {
+		thisNode = thisNode.getChildNodes().computeIfAbsent(word.charAt(i), c -> new TrieNode());
+	}
+	thisNode.setIsLastChar(true);
+}
+```
+
+**contains**
+- 특정 단어가 Trie에 존재하는지를 확인하기 위해서는 아래 2가지 조건을 만족해야 한다.
+  - 루트 노드부터 순서대로 알파벳이 일치하는 자식 노드들이 존재할 것
+  - 해당 단어의 마지막 글자에 해당하는 노드의 `isLastChar` 가 `true` 일 것
+
+```java
+boolean contains(String word) {
+	TrieNode thisNode = this.rootNode;
+
+	for (int i = 0; i < word.length(); i++) {
+		char character = word.charAt(i);
+		TrieNode node = thisNode.getChildNodes().get(character);
+
+		if (node == null) return false;
+
+		thisNode = node;
+	}
+
+	return thisNode.isLastChar();
+}
+```
+
+**delete**
+- Trie에 넣었던 단어를 삭제하는 과정이다.
+- `contains()` 처럼 주어진 단어를 찾아 하위 노드로 단어 길이만큼 내려간다.
+- 단, 노드들이 부모 노드의 정보를 가지고 있지 않기에, 하위 노드로 내려가며 삭제 대상 단어를 탐색하고 다시 올라오면서 삭제하는 과정이 **콜백**형식으로 구현되어야 한다는 것이다.
+
+그리고 아래의 삭제 조건들을 확인해야 한다.
+1. 자식 노드를 가지고 있지 않아야 한다.
+2. 삭제를 시작하는 첫 노드는 `isLastChar == true` 여야 한다.
+3. 삭제를 진행하는 중에는 `isLastChar == false` 여야 한다.
+
+```java
+void delete(String word) {
+	delete(this.rootNode, word, 0);
+}
+	
+private void delete(TrieNode thisNode, String word, int index) {
+	char character = word.charAt(index);
+  
+	// Trie에 없는 단어인 경우 에러 출력
+	if(!thisNode.getChildNodes().containsKey(character))
+		throw new Error("There is no [" + word + "] in this Trie.");
+            
+	TrieNode childNode = thisNode.getChildNodes().get(character);
+	index++;
+    
+	if(index == word.length()) {
+		// 삭제조건 2번 항목
+		// PO와 같이 노드는 존재하지만 insert한 단어가 아닌 경우 에러 출력
+		if (!childNode.isLastChar()) 
+      throw new Error("There is no [" + word + "] in this Trie.");
+			
+		childNode.setIsLastChar(false);
+		// 삭제조건 1번 항목
+		// 삭제 대상 언어의 제일 끝으로써 자식 노드가 없으면(이 단어를 포함하는 더 긴 단어가 없으면) 삭제 시작
+		if (childNode.getChildNodes().isEmpty())
+			thisNode.getChildNodes().remove(character);
+  } else {
+    delete(childNode, word, index); // 콜백함수부분
+    // 삭제조건 1,3번 항목
+    // 삭제 중, 자식 노드가 없고 현재 노드로 끝나는 다른 단어가 없는 경우 이 노드 삭제
+    if(!childNode.isLastChar() && childNode.getChildNodes().isEmpty())
+      thisNode.getChildNodes().remove(character);
+  }
+}
+```
+
 ---
 
 ## 📕 참고
 - [Tech Interview for developer](https://gyoogle.dev/blog/computer-science/data-structure/Trie.html)
 - [자료구조-트라이(Trie)](https://hongjw1938.tistory.com/24)
 - [트라이](https://ko.wikipedia.org/wiki/%ED%8A%B8%EB%9D%BC%EC%9D%B4_(%EC%BB%B4%ED%93%A8%ED%8C%85)#%EC%97%AD%EC%82%AC%EC%99%80_%EC%96%B4%EC%9B%90)
+- [[자료구조] Trie(트라이)-2 : 자바로 구현하기](https://the-dev.tistory.com/3)
