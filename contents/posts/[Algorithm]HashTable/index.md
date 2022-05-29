@@ -52,7 +52,7 @@ series: "💡 Algorithm"
 2. **Separate Chaining 방식 (분리 연결법)**
 : 일반적으로 Open Address방식은 Separate Chaining보다 느리다. Open Address의 경우 해시 버킷을 채운 밀도가 높아질수록 최악의 경우가 발생할 빈도가 높아지기 때문이다. 반면, Separate Chaining 방식은 보조 해시 함수를 사용해 잘 조정한다면 최악의 경우에 가까워지는 빈도를 줄일 수 있다. Separate Chaining 방식은 2가지 구현 방식이 있다.
 
-> Java 7에서는 Separate Chaining 방식을 사용해 `HashMap` 을 구현한다.
+> **Java 7에서는 Separate Chaining 방식을 사용해 `HashMap` 을 구현한다.**
 
 - 연결 리스트를 사용하는 방식 (`Linked List`)
   - 각각의 버킷을 연결 리스트로 만들어 충돌이 발생하면 해당 버킷의 list에 추가하는 방식이다.
