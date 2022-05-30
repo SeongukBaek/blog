@@ -120,6 +120,8 @@ String 객체 해시 함수에서 31을 사용하는데,
   - `31N = 32N - N = (N << 5) - N`
 - 즉, 성능 향상을 도모한다!
 
+---
+
 ## 📕 참고
 - [Java HashMap은 어떻게 동작하는가?](https://d2.naver.com/helloworld/831311)
 - [Plain Old Java Object](https://ko.wikipedia.org/wiki/Plain_Old_Java_Object)
