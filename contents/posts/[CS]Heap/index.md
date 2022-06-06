@@ -1,5 +1,5 @@
 ---
-title: "💡 Heap"
+title: "📂 Heap"
 description: "개발 상식"
 date: 2022-05-21
 update: 2022-05-21

@@ -1,5 +1,5 @@
 ---
-title: "💡 Array vs. ArrayList vs. LinkedList"
+title: "📂 Array vs. ArrayList vs. LinkedList"
 description: "개발 상식"
 date: 2022-05-19
 update: 2022-05-19

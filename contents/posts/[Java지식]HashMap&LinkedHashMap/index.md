@@ -56,7 +56,7 @@ implements Map<K,V>
 ### 📝 차이점
 가장 큰 차이라고 함은 내가 사용했던 이유이기도 한, **Key & Value 삽입 순서의 보장**이다.
 
-**`HashMap`**은 삽입 순서대로 저장되지 않지만, **`LinkedHashMap`**은 삽입 순서대로 저장된다.
+"**`HashMap`** 은 삽입 순서대로 저장되지 않지만, **`LinkedHashMap`** 은 삽입 순서대로 저장된다."
 
 나는 `HashMap` 에 Key & Value로 저장된 데이터들을 특정 기준으로 정렬하고 이를 정렬된 순서대로 저장되는 것을 원했기에 `LinkedHashMap` 을 사용했다. 그렇다면 `HashMap` 은 왜 삽입 순서대로 저장되지 않는 걸까 ?
 

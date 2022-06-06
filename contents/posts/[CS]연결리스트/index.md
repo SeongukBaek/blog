@@ -1,5 +1,5 @@
 ---
-title: "💡 연결 리스트 (Linked List)"
+title: "📂 연결 리스트 (Linked List)"
 description: "개발 상식"
 date: 2022-05-18
 update: 2022-05-18

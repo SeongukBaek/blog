@@ -1,5 +1,5 @@
 ---
-title: "💡 배열 (Array)"
+title: "📂 배열 (Array)"
 description: "개발 상식"
 date: 2022-05-18
 update: 2022-05-18

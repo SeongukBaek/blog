@@ -1,5 +1,5 @@
 ---
-title: "💡 Stack & Queue"
+title: "📂 Stack & Queue"
 description: "개발 상식"
 date: 2022-05-20
 update: 2022-05-20

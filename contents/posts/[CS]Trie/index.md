@@ -1,5 +1,5 @@
 ---
-title: "💡 Trie(트라이)"
+title: "📂 Trie(트라이)"
 description: "개발 상식"
 date: 2022-05-25
 update: 2022-05-25
@@ -43,9 +43,9 @@ series: "📂 Computer Science"
 트라이는 해시 테이블을 대체하는 데 사용될 수 있다.
 
 **장점**
-- 불완전한 해시 함수를 사용하는 해시테이블과 비교할 때, 자료에 접근할 때 최악의 경우 더 더 유리한 시간복잡도를 갖는다. 
-  - m이 탐색할 문자열의 길이일 때 시간복잡도는 O(m)이다. 
-  - 보통 해시테이블은 탐색 시간이 O(1)이고 해시 함수 평가 시간이 O(m)이지만, 불완전한 해시 테이블은 키 충돌이 일어날 수 있으므로, O(N)이 될 수 있다.
+- 불완전한 해시 함수를 사용하는 해시테이블과 비교할 때, 자료에 접근할 때 최악의 경우 더 유리한 시간복잡도를 갖는다. 
+  - m이 탐색할 문자열의 길이일 때 시간복잡도는 $O(m)$이다. 
+  - 보통 해시테이블은 탐색 시간이 $O(1)$이고 해시 함수 평가 시간이 $O(m)$이지만, 불완전한 해시 테이블은 키 충돌이 일어날 수 있으므로, $O(N)$이 될 수 있다.
 - 트라이에서는 키 충돌이 일어나지 않는다.
 - 여러 값이 하나의 키와 연관되어 있지 않는 한 버킷이 필요 없다.
 - 해시 함수가 없어도 된다. 키가 늘어날 때 해시 함수를 변경할 필요도 없다.
@@ -115,7 +115,6 @@ public void insert(String str) {
 
 **찾기(find)**
 - 단어를 저장했으면 저장되어 있는지 확인할 수 있어야 한다. 
-- `find()` : 사용자가 호출 시 사용, 간편히 문자열만 전달
 
 ```java
 public boolean find(String str) {
@@ -170,7 +169,7 @@ private void printTrie(Node node, int idx, StringBuilder sb) {
 ```
 
 **삭제**
-- 삭제는 재귀적으로 **bottom-up** 방식으로 진행된다.
+- 삭제는 재귀적으로 **bottom-up** 방식으로 진행되고, 3가지 경우가 있다.
 
 1. 삭제할 문자가 다른 문자의 접두사인 경우 - `isTerminal` 을 `false` 변경
    1. `Do` 는 `Door` 의 접두사가 된다. 따라서, `Do` 를 삭제한다면 `D` , `o` 에서 `o` 에 `isTerminal` 만 `false` 로 변경한다.
@@ -306,33 +305,34 @@ void delete(String word) {
 }
 	
 private void delete(TrieNode thisNode, String word, int index) {
-	char character = word.charAt(index);
-  
-	// Trie에 없는 단어인 경우 에러 출력
-	if(!thisNode.getChildNodes().containsKey(character))
-		throw new Error("There is no [" + word + "] in this Trie.");
-            
-	TrieNode childNode = thisNode.getChildNodes().get(character);
-	index++;
+    char character = word.charAt(index);
     
-	if(index == word.length()) {
-		// 삭제조건 2번 항목
-		// PO와 같이 노드는 존재하지만 insert한 단어가 아닌 경우 에러 출력
-		if (!childNode.isLastChar()) 
-      throw new Error("There is no [" + word + "] in this Trie.");
-			
-		childNode.setIsLastChar(false);
-		// 삭제조건 1번 항목
-		// 삭제 대상 언어의 제일 끝으로써 자식 노드가 없으면(이 단어를 포함하는 더 긴 단어가 없으면) 삭제 시작
-		if (childNode.getChildNodes().isEmpty())
-			thisNode.getChildNodes().remove(character);
-  } else {
-    delete(childNode, word, index); // 콜백함수부분
-    // 삭제조건 1,3번 항목
-    // 삭제 중, 자식 노드가 없고 현재 노드로 끝나는 다른 단어가 없는 경우 이 노드 삭제
-    if(!childNode.isLastChar() && childNode.getChildNodes().isEmpty())
-      thisNode.getChildNodes().remove(character);
-  }
+    // Trie에 없는 단어인 경우 에러 출력
+    if(!thisNode.getChildNodes().containsKey(character))
+        throw new Error("There is no [" + word + "] in this Trie.");
+              
+    TrieNode childNode = thisNode.getChildNodes().get(character);
+    index++;
+      
+    // 단어의 길이만큼 하위 노드로 재귀
+    if(index == word.length()) {
+      // 삭제조건 2번 항목
+      // PO와 같이 노드는 존재하지만 insert한 단어가 아닌 경우 에러 출력
+      if (!childNode.isLastChar()) 
+          throw new Error("There is no [" + word + "] in this Trie.");
+        
+      childNode.setIsLastChar(false);
+      // 삭제조건 1번 항목
+      // 삭제 대상 단어의 제일 끝으로써 자식 노드가 없으면(이 단어를 포함하는 더 긴 단어가 없으면) 삭제 시작
+      if (childNode.getChildNodes().isEmpty())
+          thisNode.getChildNodes().remove(character);
+    } else {
+      delete(childNode, word, index); // 콜백함수부분
+      // 삭제조건 1,3번 항목
+      // 삭제 중, 자식 노드가 없고 현재 노드로 끝나는 다른 단어가 없는 경우 이 노드 삭제
+      if(!childNode.isLastChar() && childNode.getChildNodes().isEmpty())
+          thisNode.getChildNodes().remove(character);
+    }
 }
 ```
 

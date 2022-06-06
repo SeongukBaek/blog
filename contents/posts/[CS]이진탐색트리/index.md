@@ -1,5 +1,5 @@
 ---
-title: "💡 이진탐색트리(Binary Search Tree)"
+title: "📂 이진탐색트리(Binary Search Tree)"
 description: "개발 상식"
 date: 2022-05-28
 update: 2022-05-28
@@ -127,10 +127,11 @@ class BinarySearchTree {
     return true;
   }
 
+  // 오른쪽 서브 트리에서 최솟값을 반환
   public Node getMin(Node deleteNode) {
-    Node minNode =null;
-		Node minNodeParent =null;
-		Node cur = deleleNode.right;
+    Node minNode = null;
+    Node minNodeParent = null;
+    Node cur = deleleNode.right;
 
 		while(cur != null) {
 			minNodeParent = minNode;
