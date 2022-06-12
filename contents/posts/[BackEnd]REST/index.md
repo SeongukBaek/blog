@@ -65,7 +65,7 @@ series: "💻 BackEnd"
 #### 🧭 REST API의 정의
 : REST를 기반으로 만들어진 API
 
-<img src="../blog/images/Back/REST.png" width="60%">
+<img src="https://res.cloudinary.com/practicaldev/image/fetch/s--YTDTEgpk--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/i/ekawmj3rafdtn06hzj79.png" width="70%">
 
 #### 🔦 특징
 - REST 기반으로 시스템을 분산해 확장성과 재사용성을 높여 유지보수 및 운용이 편리해진다.
