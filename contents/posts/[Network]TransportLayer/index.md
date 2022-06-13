@@ -1,8 +1,8 @@
 ---
-title: "📡 [OSI 7계층] Transport Layer"
+title: "📡 Transport Layer"
 description: "개발 상식"
-date: 2022-06-12
-update: 2022-06-12
+date: 2022-06-13
+update: 2022-06-13
 tags:
   - Network
   - OSI
