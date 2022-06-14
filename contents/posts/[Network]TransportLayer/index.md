@@ -35,7 +35,4 @@ series: "📡 Network"
 ---
 
 ## 📕 참고
-- [OSI 7 Layer vs TCP/IP 5 Layer](https://velog.io/@osk3856/TCP-Updated-Model)
-- [Application Layer 개요](https://ddongwon.tistory.com/71)
-- [Part 1-3 Network](https://github.com/JaeYeopHan/Interview_Question_for_Beginner/tree/master/Network)
 - [[TCP] 3-way-handshake & 4-way-handshake](https://asfirstalways.tistory.com/356)
