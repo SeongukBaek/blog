@@ -21,8 +21,8 @@ series: "📺 스프링 입문"
 
 ## 🔍 프로젝트 생성
 ### ⛏ 사전 준비
-- JAVA 11 (자바에 익숙하고 잘 다룰 줄 안다면 버전은 상관없지만, 막힘없는 진행을 위해 11로 설치한다.)
-- IDE: Intellij or Eclipse (나는 Intellij를 사용한다. ~~요즘 실무에서 Eclipse를 이용하는 서버 개발자는 거의 없다고 한다...~~)
+- JAVA 11
+- IDE: IntelliJ or Eclipse
 
 **Springboot Starter를 사용하여 프로젝트 생성**
 → https://start.spring.io
@@ -37,8 +37,8 @@ series: "📺 스프링 입문"
     프로젝트에서 작성한 파일들을 JVM이나 WAS에서 인식할 수 있도록 패키징해주는 도구
 - **Project Spring Boot**: 2.5.6
 - **Language**: Java 
-- Group: hello
-- Artifact: hello-spring
+- Group: 보통 기업 도메인명
+- Artifact: 빌드되어 나오는 결과물, 프로젝트명
 - **<span id="packaging">Packaging</span>: 어떤 패키징 방식을 사용할 것인가 ?**
 	
     - Jar(Java Archieve): Java application이 동작할 수 있도록 패키징하는 방식
@@ -53,7 +53,7 @@ series: "📺 스프링 입문"
     - 추가적으로, lombok(Annotation을 이용해 Compile 시점에 Getter, Setter, 생성자, toString, Builder 등을 자동으로 만들어주는 라이브러리)
     
 ![](https://images.velog.io/images/bsu1209/post/03dcea8e-00c1-4214-b9e0-6ad2806ec2ca/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202021-11-05%20%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE%208.07.23.png)
-이후 ```GENERATE```로 .zip 파일을 다운로드한 후, unzip 한 파일을 ```Intellij``` 로 **OPEN**
+이후 ```GENERATE```로 .zip 파일을 다운로드한 후, unzip 한 파일을 ```IntelliJ``` 로 **OPEN**
 
 > Project open시, 외부의 library를 로딩하는 과정이 필요하기 때문에, 시간이 좀 걸릴 수 있다.
 
@@ -99,10 +99,11 @@ test {
 ```
 
 이제 ```src/main/java/hello.hellospring``` 안에 있는 메인 코드를 실행시켜보자.
-<p align="center"><img src="https://images.velog.io/images/bsu1209/post/51434c13-238d-455c-8c8a-8f06c1f87018/image.png" width="100%" height="30%"></p>
+<img src="https://images.velog.io/images/bsu1209/post/51434c13-238d-455c-8c8a-8f06c1f87018/image.png">
 
 실행한 후, http://localhost:8080 으로 접속해보자.
-<p align="center" id="firstP"><img src="https://images.velog.io/images/bsu1209/post/6c5ab164-d198-480e-bec1-e89b630b3e2d/image.png" width="60%" height="30%"></p>
+<img src="https://images.velog.io/images/bsu1209/post/6c5ab164-d198-480e-bec1-e89b630b3e2d/image.png">
+
 아직은 아무런 View를 구성하지 않았기에, 위와 같은 화면이 뜨게 된다.
 
 ---
@@ -120,7 +121,7 @@ dependencies {
 
 이러한 이유는 우리가 사용하기 위해 추가한 3개의 라이브러리도 동작하기 위해서는 필요한 다른 라이브러리들이 존재한다. **Gradle**은 이러한 **추가적인 라이브러리를 자동으로 ```External Libraries``` 에 추가**해주기 때문에 많은 라이브러리들이 추가되어 있는 것이다.
 
-<p align="center"><img src="https://images.velog.io/images/bsu1209/post/998b6f57-ec6d-4fd8-9c4b-cb0e7e6144d0/image.png" width="70%" height="30%"></p>
+<img src="https://images.velog.io/images/bsu1209/post/998b6f57-ec6d-4fd8-9c4b-cb0e7e6144d0/image.png" width="70%">
 
 위 화면에서 보이듯, **Gradle > hello-spring > Dependencies**에서 라이브러리간의 의존관계를 확인할 수 있다.
 
@@ -154,7 +155,7 @@ dependencies {
 ```
 코드를 작성하고 서버를 재시작하면, 아래의 화면을 볼 수 있을 것이다.
 
-<p align="center"><img src="https://images.velog.io/images/bsu1209/post/85ba87cc-a09b-4643-83cf-052ec6f022f7/image.png" width="80%" height="30%"></p>
+<img src="https://images.velog.io/images/bsu1209/post/85ba87cc-a09b-4643-83cf-052ec6f022f7/image.png" width="80%">
 
 > Spring은 그 생태계가 어마어마하게 크기 때문에, 머릿속에 모든 것을 다 넣을 수는 없다.
 따라서, 원하는 것을 잘 찾는 능력이 필요하다.
@@ -173,7 +174,7 @@ https://docs.spring.io/spring-boot/docs/current/reference/html/
 
 이제, 실제로 동작하고, 프로그래밍이 되는 화면을 구현해보도록 하자.
 
-<p align="center"><img src="https://images.velog.io/images/bsu1209/post/cb9d6ff7-d0fd-41ec-b791-8b94c0fb17f9/image.png" width="50%" height="30%"></p>
+<img src="https://images.velog.io/images/bsu1209/post/cb9d6ff7-d0fd-41ec-b791-8b94c0fb17f9/image.png" width="50%">
 
 먼저, ```src/main/java/hello.hellospring``` 에 ```controller``` 라는 **Package**를 생성한다. 이후 ```HelloController``` 라는 **Class**를 생성한다.
 
@@ -229,10 +230,10 @@ public String Hello(Model model) {
 
 그리고 ```<p th:text="'안녕하세요. ' + ${data}">안녕하세요. 손님</p>``` 에서 **data**는 아까 위의 ```HelloController``` 에서 작성한 ```model.addAttribute("data", "hello!!!");``` 의 **data**를 의미한다. 이 메소드에서 **"data"는 attributeName**이고, **"hello!!!"는 attributeValue**가 된다. 이후 일단 서버를 재시작해보자.
 
-<p align="center"><img src="https://images.velog.io/images/bsu1209/post/4a0e589d-b2e8-461a-840a-922330166e60/image.png" width="70%" height="30%"></p>
+<img src="https://images.velog.io/images/bsu1209/post/4a0e589d-b2e8-461a-840a-922330166e60/image.png" width="70%">
 위와 같이 /hello로 접속하게 되면, ${data}가 "hello!!!"로 치환된 것을 확인할 수 있다.
 
-<p align="center"><img src="https://images.velog.io/images/bsu1209/post/1a2948e3-36c9-4b08-9223-b3b00f218255/%E1%84%86%E1%85%AE%E1%84%8C%E1%85%A6.drawio%20(1).png" width="80%" height="30%"></p>
+<img src="https://images.velog.io/images/bsu1209/post/1a2948e3-36c9-4b08-9223-b3b00f218255/%E1%84%86%E1%85%AE%E1%84%8C%E1%85%A6.drawio%20(1).png" width="80%">
 
 - `localhost:8080/hello` 에 `GET` 방식으로 접근하게 되면, 생성한 `HelloController` 안의 statement들을 실행하게 된다.
 	
@@ -244,19 +245,19 @@ public String Hello(Model model) {
 ## 🔍 빌드하고 실행하기
 **꼭 서버를 종료한 후,**
 
-1. `./gradlew build` → "필요한 lib들을 다운받고 빌드가 수행"<img src="https://images.velog.io/images/bsu1209/post/48e1f4b1-df00-4c2c-989f-1517a906d4a3/image.png" width="50%" height="30%">이와 같이 뜨면 빌드가 성공된 것이다.
+1. `./gradlew build` → "필요한 lib들을 다운받고 빌드가 수행"<img src="https://images.velog.io/images/bsu1209/post/48e1f4b1-df00-4c2c-989f-1517a906d4a3/image.png" width="50%"> 이와 같이 뜨면 빌드가 성공된 것이다.
 2. `cd build/libs` → "해당 폴더에 빌드된 `jar` 파일이 생성됨"
-이는 스타터로 설정한 <a href="#packaging">Packaging</a> 방식으로 인해 `jar` 파일이 생성된다.<img src="https://images.velog.io/images/bsu1209/post/08360dc5-5146-499b-9910-af1ff9188b35/image.png" width="70%" height="30%">위와 같이 `hello-spring-0.0.1-SNAPSHOT-plain.jar` 이라는 파일도 같이 생성되는데, 이는 Spring-boot 2.5.0 이상부터 생성되는 듯하다. 
+이는 스타터로 설정한 <a href="#packaging">Packaging</a> 방식으로 인해 `jar` 파일이 생성된다.<img src="https://images.velog.io/images/bsu1209/post/08360dc5-5146-499b-9910-af1ff9188b35/image.png" width="70%"> 위와 같이 `hello-spring-0.0.1-SNAPSHOT-plain.jar` 이라는 파일도 같이 생성되는데, 이는 Spring-boot 2.5.0 이상부터 생성되는 듯하다. 
 이를 없애려면, `build.gradle` 파일 안에 `jar { enabled = false }` 코드를 추가해주고 build를 수행하면 된다.
 3. `java -jar hello-spring-0.0.1-SNAPSHOT.jar`
-<img src="https://images.velog.io/images/bsu1209/post/58a7fe61-93dc-4b38-baa6-e44fe17ca62f/image.png" width="100%" height="30%">서버가 가동되는 것을 확인할 수 있다.
+<img src="https://images.velog.io/images/bsu1209/post/58a7fe61-93dc-4b38-baa6-e44fe17ca62f/image.png"> 서버가 가동되는 것을 확인할 수 있다.
 
 이제 빌드된 결과물인 `hello-spring-0.0.1-SNAPSHOT.jar` 만 파일만 실행시키면 서버가 동작할 수 있게 되었다.
 
 > `./gradlew clean`
-: `build` 폴더가 삭제된다.
-`./gradlew clean build`
-: `build` 폴더를 삭제하고 새로 build 수행
+> : `build` 폴더가 삭제된다.
+> `./gradlew clean build`
+> : `build` 폴더를 삭제하고 새로 build 수행
 
 ---
 
@@ -265,7 +266,7 @@ public String Hello(Model model) {
 
 **Spring Boot DevTools**<br/>
 :파일 수정 이후 별도로 서버를 재시작할 필요 없이 변경 사항이 적용되도록 해주는 도구
-<p align="center"><img src="https://images.velog.io/images/bsu1209/post/6307ef88-1a2d-45ae-8359-c090b337f5c2/image.png" width="80%" height="30%"></p>
+<img src="https://images.velog.io/images/bsu1209/post/6307ef88-1a2d-45ae-8359-c090b337f5c2/image.png" width="80%">
 
 ```java
 // application.properties
