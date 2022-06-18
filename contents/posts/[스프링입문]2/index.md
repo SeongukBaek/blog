@@ -66,7 +66,7 @@ public String helloMvc(@RequestParam ("name") String name, Model model) {
 ```
 - `@RequestParam` annotation은 HTTP request parameter를 method의 parameter로 전달받을 때 사용한다. `form` 에서의 `input` 의 `name` 과 매칭되어 해당 값을 받아올 수 있다.
 - `String name` 에 해당 값을 담고, `Model model` 을 이용하여 `View` 에서 rendering 시 사용
-- `model.addAttribute` method로 **`key`** 가 **"name"**이고, **`변수이름`** 이 **`name`** 인 값을 가져와서 `View` 로 전달한다.
+- `model.addAttribute` method로 **`key`** 가 **"name"** 이고, **`변수이름`** 이 **`name`** 인 값을 가져와서 `View` 로 전달한다.
 
 **`resources/templates/hello-templates.html`**<br/>
 
@@ -152,7 +152,10 @@ static class Hello {
     }
 }
 ```
-- http://localhost:8080/hello-api?name=spring 으로 접속하면 아래 사진에서 보이는 바와 같이 **`Key` & `Value`** 로 이루어진 **JSON** 구조를 확인할 수 있다.<img src="https://images.velog.io/images/bsu1209/post/d466fad7-fe76-47f4-9394-f520b4a787e9/image.png" width="40%">
+- http://localhost:8080/hello-api?name=spring 으로 접속하면 아래 사진에서 보이는 바와 같이 **`Key` & `Value`** 로 이루어진 **JSON** 구조를 확인할 수 있다.
+
+<img src="https://images.velog.io/images/bsu1209/post/d466fad7-fe76-47f4-9394-f520b4a787e9/image.png" width="40%">
+
 > mac 기준 `⌘ + n` 으로 Getter와 Setter를 생성할 수 있다.
 `Hello` Class 안에 있는 `String name` 은 `private` 이므로, 해당 변수에 대한 접근은 오직 `public` 한 `getName` or `setName` 으로만 가능하게 한다.
 → **JavaBeans** 표준 방식
@@ -164,16 +167,13 @@ static class Hello {
 2. template engine의 경우, 해당하는 view를 보여주기 위해 viewResolver에게 전달했지만 `@ResponseBody` 를 발견하면 `http` 응답에 해당 Data를 그대로 전달하기 위한 처리를 수행
 3. 이때, 전달하려는 Data가 문자열이 아닌 **객체**이므로 이에 대한 처리가 필요하다.
 	- Spring의 기본 정책은 객체가 오는 경우, 이를 JSON 방식으로 Http 응답에 반환하는 것
-4. `HttpMessageConverter` 가 동작하여 
-String인 경우는 `StringConverter`, 객체인 경우는 `JsonConverter` 를 동작시킴
+4. `ViewResolver` 대신 `HttpMessageConverter` 가 동작하여 **String인 경우는 `StringConverter`**, **객체인 경우는 `JsonConverter`** 를 동작시킴
    - 대표적인 JsonConverter library로는 `MappingJacksonHttpMessageConveter` 와 `GsonHttpMessageConveter` 가 있다.
    - HttpMessageConverter는 클라이언트가 원하는 response 형태를 header에 명시한 경우, 이에 맞춰 선택된다. 그렇지 않은 경우는 spring이 알아서 선택!
    - MessageConverter에 대한 자세한 정보는 참고에 있는 **HttpMessageConverter** 를 확인
 5. Converter를 이용해 변환된 결과를 요청측으로 전달
 
-> 예전에는 JSON이 아닌 XML 방식을 사용했었는데, (ex. html code) 
-이는 열고 닫는 이중의 code가 필요하고, 무겁다는 단점때문에 
-최근에는 Simple한 JSON 형태를 많이 사용한다.
+> 예전에는 JSON이 아닌 XML 방식을 사용했었는데, (ex. html code) 이는 열고 닫는 이중의 code가 필요하고, 무겁다는 단점때문에 최근에는 Simple한 JSON 형태를 많이 사용한다.
 
 ---
 

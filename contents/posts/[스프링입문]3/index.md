@@ -79,7 +79,7 @@ public interface MemberRepository {
 ```
 
 > <strong>`Optional<>`</strong> 은 뒤에 명시된 API가 가져온 객체가 null일 수도, 아닐 수도 있는데 null인 경우를 대비해 이를 감싸주는 Wrapper 역할을 수행한다. (JAVA 8에 내장된 기능)
-그래서 `get()` method 사용 시, `isPresent()` 를 사용하여 null 여부를 판단한다.
+> - 그래서 `get()` method 사용 시, `isPresent()` 를 사용하여 null 여부를 판단한다.
 
 - `save` 로 저장소에 회원 정보가 저장
 - 이후 아래 4개의 기능들로 저장된 회원정보를 조회하고, `findAll` 은 모든 회원정보를 가져오는 기능
@@ -99,15 +99,15 @@ private static long sequence = 0L;
 
 - `id` 를 Key로서 사용하기 위해 `Long` 으로 지정해주고, '0,1,2'와 같이 Key 값을 생성해주는 `sequence` 를 선언한다.
 
-> **Map collection class**는 Key와 value를 하나의 쌍으로 저장하는 방식을 사용한다. 이때 Key는 실질적인 value를 찾기 위한 역할을 한다. 
+**Map collection class**는 Key와 value를 하나의 쌍으로 저장하는 방식을 사용한다. 이때 Key는 실질적인 value를 찾기 위한 역할을 한다. 
 - entry의 저장 순서를 고려하지 않고,
 - Key는 중복이 허용되지 않는다.
->
+
 `HashMap` 은 Key와 value를 묶어 하나의 entry로 저장한다. 이름 그대로 `Hash` 알고리즘을 사용하기에 데이터의 검색 속도가 빠르다.
 - 역시나 Key는 중복이 불가능하고,
 - value는 null이 가능하다.
->
-실무에서는 위와 같은 공유되는 변수에 대한 동시성 문제때문에 `ConcurrentHashMap` & `AtomicLong` 등을 사용해야 한다. 동시성 제어와 관련된 참고: https://devlog-wjdrbs96.tistory.com/269
+
+> 실무에서는 위와 같은 **공유되는 변수에 대한 동시성 문제**때문에 `ConcurrentHashMap` & `AtomicLong` 등을 사용해야 한다. 동시성 제어와 관련된 참고: https://devlog-wjdrbs96.tistory.com/269
 
 **회원 정보 저장 (save)**<br/>
 ```java
@@ -162,7 +162,7 @@ public List<Member> findAll() {
 
 `src/test/java/hello.hellospring/repository/MemoryMemberRepositoryTest` 라는 새로운 class를 생성한다.
 
-**save() Test**<br/>
+**save() Test**
 
 ```java
 package hello.hellospring.repository;
@@ -185,7 +185,6 @@ class MemoryMemberRepositoryTest {
         System.out.println("result = " + (result == member));
     }
 }
-
 ```
 - `@Test` 를 통해 TEST 코드임을 명시하고, 새로운 `Member` 객체를 만든다.
 - 해당 객체의 Name을 set하고, `save()` 를 수행한다.
@@ -258,6 +257,7 @@ public void findAll() {
 - 동일한 방법으로 Test를 수행하되, `findAll` 이므로 반환형이 `List` 이기 때문에 `result` 의 `size()` 에 대해 비교를 수행한다.
 
 이제 **Class** 전체 Test를 실행하면 에러가 발생하고 아래와 같이 명시한 것과 실행 순서가 달라진 것을 확인할 수 있다.
+
 <img src="https://images.velog.io/images/bsu1209/post/2f2d4c44-a2dd-4a80-b640-66144e6e3a08/image.png" width="40%">
 
 - 실행 순서는 보장되지 않기 때문에 `findAll` 에서 이미 `member1` & `member2` 객체를 생성하여 `findByName` 에서 에러가 발생하는 것이다.
@@ -313,7 +313,7 @@ private final MemberRepository memberRepository = new MemoryMemberRepository();
 - 비즈니스 로직에서, 중복된 이름이 존재하는 경우 회원가입이 불가능해야 하기에, 이미 생성한 `findByName` method로 이름의 여부를 확인한다.
 - 이름이 없는 경우에만 `save` method로 회원가입이 가능하게 하고, 해당 회원의 `id` 를 반환한다.
 
-위의 코드를 `Control + T` 단축키를 이용해 `Extract Method` 하여 아래와 같은 형태로 변환할 수 있다.
+위의 코드를 `Control + T` 단축키를 이용해 리팩토링과 관련된 기능을 사용할 수 있고, `Extract Method` 하여 아래와 같은 형태로 변환할 수 있다.
 
 ```java
 public Long join(Member member) {
@@ -348,10 +348,9 @@ public Optional<Member> findOne(Long memberId) {
 ---
 
 ## 🔍 회원 서비스 테스트
-위에서 구현한 회원 서비스에 대한 테스트를 수행
-`command + shift + T` 단축키를 이용해 손쉽게 Test를 작성할 수 있다.
-<img src="https://images.velog.io/images/bsu1209/post/a746a9db-6f7a-4409-849d-b7399999460c/image.png" width="70%"><img src="https://images.velog.io/images/bsu1209/post/79061a99-b540-44d9-9fc9-6924ef2e3df0/image.png" width="40%">
-- 위와 같이 **Test Package** 가 생성된 것을 확인할 수 있다.
+위에서 구현한 회원 서비스에 대한 테스트를 수행, `command + shift + T` 단축키를 이용해 손쉽게 Test를 작성할 수 있다.
+
+<img src="https://images.velog.io/images/bsu1209/post/a746a9db-6f7a-4409-849d-b7399999460c/image.png" width="70%">
 
 ```java
 @Test
@@ -363,7 +362,6 @@ void 회원가입() {
 ```
 - Test 코드는 과감하게 한글로 바꿔도 상관이 없다. 실제 build 될 때, 테스트 코드는 포함되지 않기 때문이다.
 - 그리고 Test는 **given, when, then** 이라는 큰 틀로 설계할 수 있다.
-	
     - given: 주어지는 data
     - when: 이를 실행했을 때
     - then: 나와야 하는 결과
@@ -387,7 +385,7 @@ void 회원가입() {
 - 회원가입이 정상 동작했다면, `member` 객체의 `Name` 과 `findOne` 의 반환 객체인 `findMember` 의 `Name` 이 동일할 것이다.
 
 위의 Test code는 사실상 **반쪽짜리 Test code** 이다.
-왜냐하면, Test는 예외에 대해서도 수행되어야 하기 때문이다. (그리고 `service` 에 중복회원체크 method도 있기 때문에 해당 Test도 필요하다.)
+- 왜냐하면, **Test는 예외에 대해서도 수행되어야 하기 때문**이다. (그리고 `service` 에 중복회원체크 method도 있기 때문에 해당 Test도 필요하다.)
 
 ```java
 @Test
@@ -404,7 +402,7 @@ public void 중복_회원_예외() {
     try {
         memberService.join(member2);
         fail();
-    } catch(IllegalStateException e) {
+    } catch (IllegalStateException e) {
         assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
     }
 

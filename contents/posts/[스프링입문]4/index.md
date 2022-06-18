@@ -19,6 +19,10 @@ series: "📺 스프링 입문"
 > - DB 연동 - JDBC, JPA, Spring data JPA
 > - 테스트 케이스 작성
 
+> **스프링 빈을 등록하는 방법**
+> 1. 컴포넌트 스캔과 자동 의존관계 설정
+> 2. 자바 코드를 이용한 직접 등록
+
 ## 🔍 컴포넌트 스캔과 자동 의존관계 설정
 이전 시간까지 생성한 Member가 서비스를 이용하기 위해서는 Service, Controller 간 **의존성이 필요**하다.
 
@@ -35,14 +39,14 @@ public class MemberController {
 ```
 
 - 이렇게 `@Controller` 를 사용해 아무 코드가 없는 controller를 생성하게 되면, 스프링 컨테이너에 `MemberController` 라는 객체가 생성되어 관리된다.
+
 **= Spring Bean이 관리된다고 표현**, [이곳](https://velog.io/@bsu1209/Spring-%EB%91%90%EB%B2%88%EC%A7%B8.-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9B%B9-%EA%B0%9C%EB%B0%9C-%EA%B8%B0%EC%B4%88#%ED%85%9C%ED%94%8C%EB%A6%BF-%EC%97%94%EC%A7%84%EC%9D%B4%EB%9E%80)에서 스프링 컨테이너의 구조를 확인할 수 있다.
 
 ```java
 private final MemberService memberService = new MemberService();
 ```
 - Controller에서, `new` 를 이용하여 객체를 생성해 사용할 수도 있지만, 스프링이 관리하기 때문에 컨테이너에 등록하고 이로부터 받아서 사용하도록 바꿔야 한다.
-	
-    - 다른 code에서도 동일 서비스 객체를 여러 번 생성하여 사용하는 것은 불필요하기 때문이다.
+    - **다른 code에서도 동일 서비스 객체를 여러 번 생성하여 사용하는 것은 불필요**하기 때문이다.
 
 ```java
 @Autowired
@@ -52,6 +56,7 @@ public MemberController(MemberService memberService) {
 ```
 
 - 생성자를 이용하여 스프링 컨테이너에 연결한다.
+
 이때, `@Autowired` 를 이용하는데, 이는 호출된 생성자의 파라미터와 스프링 컨테이너를 연결시켜준다. 위의 예제에서는 스프링 컨테이너에 있는 `MemberService` 와 연결을 수행한다.
 
 실행을 하게 되면
@@ -61,26 +66,29 @@ Parameter 0 of constructor in hello.hellospring.controller.MemberController requ
 
 위와 같이 **`MemberService` 를 찾을 수 없다는 에러**가 발생한다.
 
-이러한 이유는, 
-이전에 작성한 **`MemberService` 는 순수한 Java 코드이므로, 스프링이 이를 인식할 방법이 없다.**
+이러한 이유는, 이전에 작성한 **`MemberService` 는 순수한 Java 코드이므로, 스프링이 이를 인식할 방법이 없다.**
 
 ```java
 @Service
 public class MemberService
 ```
 
-따라서 스프링 컨테이너가 해당 Service를 인식하고 등록할 수 있도록 `@Service` annotation을 사용한다. 또한, 
+따라서 스프링 컨테이너가 해당 Service를 인식하고 등록할 수 있도록 **`@Service` annotation**을 사용한다.
 
-전체적으로 보았을때, 
+또한 전체적으로 보았을때, 
 Controller class - 외부 요청을 받음 - `@Controller`, 
 Test class - `@SpringBootTest`, 
 Repository class - Data 저장 - `@Repository`, 
-Service class - 비즈니스 로직 생성 - `@Service` annotation이 사용하여 스프링이 동작할 때, 컨테이너에 등록하는 것을 확인할 수 있다.
+Service class - 비즈니스 로직 생성 - `@Service` 
 
-**의존 관계 주입 (Dependency Injection)**<br/>
-Controller 생성자에 `@Autowired` 를 사용해 연결을 수행
+다음과 같이 각 annotation을 사용하여 스프링이 동작할 때, 컨테이너에 등록하는 것을 확인할 수 있다.
+
+> **정형화된 패턴!**
+
+**의존 관계 주입 (Dependency Injection)**
+: Controller 생성자에 `@Autowired` 를 사용해 연결을 수행
 - controller가 생성될 때, 스프링 빈에 있는 객체를 가져다 연결에 사용
-= **Dependency Injection(의존성 주입)**
+  = **Dependency Injection(의존성 주입)**
 
 `MemberService.java`
 
@@ -119,15 +127,15 @@ public @interface Service {
 ```
 
 아래는 위에서 설명한 **Controller**, **Service**, **Repository** 를 포함하는 스프링 컨테이너의 구조를 간략하게 표현했다.
+
 <img src="https://images.velog.io/images/bsu1209/post/3301dcf1-f60e-4e23-96e7-df3c0776d454/springboot-Page-2.drawio%20(2).png" width="80%">
 
-이렇게 `@Component` annotation이 사용된 경우, 스프링이 동작할 때
-이들을 모두 **객체** 로 생성하여 **스프링 컨테이너에 자동 등록**된다. (=스프링 빈으로 자동 등록)
+이렇게 `@Component` annotation이 사용된 경우, 스프링이 동작할 때 이들을 모두 **객체** 로 생성하여 **스프링 컨테이너에 자동 등록**된다. (=스프링 빈으로 자동 등록)
 - 위 예시에서는 `helloController` , `memberService` , `memberRepository` 가 객체로 생성되어 등록된다.
 - 그리고, `@Autowired` annotation은 **등록된 객체간의 연관관계**를 의미한다.
 
 > **그럼 아무 class에서 Annotation을 명시하면 스프링 컨테이너에 자동 등록될까 ?**
-> 정답은 우리가 실행하는 `HelloSpringApplication` 의 `package` 의 위치에 따라 결정된다.
+> 정답은 기본적으로는 우리가 실행하는 `HelloSpringApplication` 의 `package` 의 위치에 따라 결정된다.
 > - 해당 package와 동일하거나 하위 package에 포함되어 있는 경우, 스프링이 모두 찾아 스프링 빈으로 컴포넌트 스캔을 수행한다.
 
 > **참고**
@@ -158,7 +166,6 @@ public class SpringConfig {
 ```
 - `@Bean` annotation은 스프링 빈을 등록한다는 것을 명시한다.
 - 스프링이 동작할 때, `@Configuration` 을 읽으면
-	
     - `@Bean` 을 찾아 해당 로직을 호출하여 이를 스프링 빈으로 등록한다.
 - 위의 코드는 에러가 뜨는데, 해결하기 위해서 **생성자에서의 추가**가 필요하다.
 
@@ -179,12 +186,15 @@ public MemberRepository memberRepository() {
 
 실행했을 때 문제 없이 잘 동작한다.
 
-> <strong>DI(Dependency Injection)</strong>에는 3가지 방법이 있다.
-- Field Injection : 고정적인 방법, 수정이 불가능
+> **DI(Dependency Injection)** 에는 3가지 방법이 있다.
+
+- **Field Injection** : 고정적인 방법, 수정이 불가능
+
 ```java
 @Autowired private MemberService memberService;
 ```
-- Setter Injection : Setter를 통해 주입, 생성 따로 주입 따로, setter가 public하게 노출되어 위험할 수 있다.
+- **Setter Injection** : Setter를 통해 주입, 생성 따로 주입 따로, setter가 public하게 노출되어 위험할 수 있다.
+
 ```java
 private MemberService memberService; // final 제거
 @Autowired
@@ -193,6 +203,7 @@ public void setMemberService(MemberService memberService) {
 }
 ```
 - **Constructor Injection** : 가장 권장, 의존관계가 실행 중에 동적으로 변경되는 경우는 거의 없기 때문이다.
+
 ```java
 public MemberController(MemberService memberService) {
     this.memberService = memberService;
