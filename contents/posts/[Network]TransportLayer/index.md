@@ -1,8 +1,8 @@
 ---
 title: "📡 Transport Layer"
 description: "개발 상식"
-date: 2022-06-13
-update: 2022-06-13
+date: 2022-06-20
+update: 2022-06-20
 tags:
   - Network
   - OSI
@@ -11,6 +11,21 @@ series: "📡 Network"
 ---
 
 ## 🧷 Transport Layer
+이전에 다룬 Application Layer의 바로 하단에 위치하는 계층이다.
+
+### 🪚 전송 계층의 역할
+전송 계층의 역할은 크게 2가지로 나뉜다.
+1. **출발지로부터 도착지까지 패킷이 정상적으로 전송될 수 있도록 한다.**
+2. **응용 계층에서 만든 데이터를 일정한 크기로 분할한다.**
+
+### 🪚 전송 계층의 프로토콜의 종류
+대표적으로 2가지의 프로토콜이 있다.
+
+**TCP(Transmission Control Protocol)**
+- Reliable, in-order delivery: 신뢰성있고, 순서를 보장한다.
+- Connection Setup
+
+**UDP(User Datagram Protocol)**
 
 ### 🪚 3-way handshake & 4-way handshake
 **연결 성립**
@@ -35,4 +50,6 @@ series: "📡 Network"
 ---
 
 ## 📕 참고
+- [Transport Layer 개요 (Multiplexing, Demultiplexing)](https://ddongwon.tistory.com/79)
 - [[TCP] 3-way-handshake & 4-way-handshake](https://asfirstalways.tistory.com/356)
+- [TCP와 UDP](https://github.com/WooVictory/Ready-For-Tech-Interview/blob/master/Network/)
