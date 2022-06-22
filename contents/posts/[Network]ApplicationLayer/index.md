@@ -96,34 +96,6 @@ Application 계층을 제외한 **나머지 4계층은 모두 OS에 구현**되�
 인터넷은 응용 계층에 2개의 전송 프로토콜을 제공한다. TCP(Transmission Control Protocol)과 UDP(User Datagram Protocol)이다.
 - 이는 응용 계층이 아니라 전송 계층의 프로토콜이다!
 
-### 🪚 TCP
-Transmission Control Protocol, 이름 그대로 전송을 제어하는 프로토콜이라고 생각할 수 있다.
-- **Reliable**하다.
-- `3-way handshake` 를 통해 초기 연결을 설정한다.
-- **Flow control(흐름 제어)**: 수신측의 상태를 확인하면서 전송을 이어간다.
-  - 수신 데이터를 담는 `Buffer` 는 유한한 자원이므로, **Overflow**가 발생할 수 있다.
-  - 따라서 수신측의 `Buffer` 가 수용 가능한 만큼을 전송한다.
-- **Congesting control(혼잡 제어)**: 네트워크 상태를 확인하면서 전송을 이어간다.
-  - 네트워크가 혼잡하다면, 보내는 패킷 양을 제어하여 전송한다.
-- Timing, Security, Minimum Throughput guarantee를 제공하지 않는다.
-- **Connection-Oriented**: 물리적 연결이 아닌 논리적 연결로, **순서에 맞게 손실 없이 데이터를 전송**한다.
-
-모든 TCP 연결은 `Full-duplex`, `Point to Point` 방식이다.
-- `Full-duplex` 는 전송이 양방향으로 동시에 일어날 수 있음을 의미하고,
-- `Point to Point` 는 각 연결이 정확히 2개의 목적 포인트를 가짐을 의미한다.
-  - 따라서 **TCP는 멀티캐스팅이나 브로드캐스팅을 지원하지 않는다.**
-
-> 인터넷은 기본적으로 **Best-Effort Service**로, 신뢰성을 보장하지 않는다.
-
-### 🪚 UDP
-User Datagram Protocol
-- **Unreliable**하다.
-  - Network 계층의 data를 응용 계층으로 바로 전달하기에 매우 단순한 구조이다.
-- **Connection-Less** (비연결형 프로토콜)
-- IP 데이터그램을 **캡슐화**하여 보내는 방법과, **연결 설정 없이** 보내는 방법을 제공한다.
-- **빠른 데이터 처리**를 요구하는 경우 사용할 수 있다.
-- TCP에서 필요했던 초기 연결 설정 메세지보다 적은 메세지를 요구한다.
-
 ---
 
 ## 🧷 HTTP
