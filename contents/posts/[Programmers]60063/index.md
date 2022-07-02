@@ -5,7 +5,7 @@ date: 2022-06-26
 update: 2022-06-26
 tags:
   - BFS
-  - 구현ㅎ
+  - 구현
 series: "👩‍💻 Programmers"
 ---
 
