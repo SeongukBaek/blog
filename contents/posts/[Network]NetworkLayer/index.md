@@ -41,6 +41,7 @@ series: "📡 Network"
 ## 🧷 라우터 내부 구조
 <img src="../../images/Network/라우터구조.jpeg" width="80%">
 
+- 라우터는 두 개 이상의 네트워크를 연결하는 디바이스로, `source` 로부터 `destination` 으로 정보(패킷)를 전송하는 데 사용된다. 
 - 라우팅을 담당하고 관리하는 SW형태의 routing processor와, Forwarding을 담당하는 HW형태의 high-speed switching fabric이 존재한다.
 - routing processor는 패킷의 목적지 주소를 가지고 RT를 참고한다. 이후 다음 라우터를 결정한다.
 - 패킷은 router input ports에서 목적지 주소를 확인하고, 버퍼링된다. 
@@ -142,11 +143,20 @@ input port와 마찬가지로, output port 또한 Queuing을 수행한다.
 또한 Header checksum이라는 정보를 확인할 수 있는데, 이는 header에 대한 checksum이지, data에 대한 checksum은 아니므로 에러가 있는 data가 전달될 수 있다.
 - 이는 TCP/UDP에서 detect한다.
 
+**MTU**
+- 16bit identifier, flags, fragment offset 필드는 fragmentation을 위해 사용된다.
+  - fragmentation: 패킷을 더 작은 단위로 나누는 것
+- 이때, fragmentation을 통해 나눈 패킷들을 식별하고 순서를 보장하기 위해 사용되는 정보이다.
+- 그리고, 나누는 기준이 되는 것이 MTU(Maximum Transmission Unit)이고, 이는 네트워크에 따라 다르다.
+  - 16bit identifier는 나누어진 패킷(fragment)들을 목적지에서 결합할 때, 같은 패킷이었는지를 식별하는 데 사용된다.
+  - flags는 나누어진 패킷들이 더 존재하는지, 혹은 더 이상 없는지를 알려준다.
+  - fragment offset은 같은 패킷이었던 fragment들의 순서를 알려준다.
+
 ### 🪚 Subnet
 <img src="../../images/Network/subnet.jpeg" width="80%">
 
 라우터는 여러 개의 인터페이스를 가지고, 인터페이스마다 파란색으로 영역이 나누어진다.
-- 이렇게 나누어진 파란색 영역들을 Subnet이라 한다. 
+- 이렇게 나누어진 파란색 영역들을 Subnet이라 한다. 쉽게 말해 네트워크 내의 네트워크!
 - Subnet이 같은 호스트들은 라우터의 개입 없이 정보를 주고 받을 수 있다.
 
 IP주소는 subnet part와 host part로 나뉜다.
@@ -377,6 +387,13 @@ Internet Control Message Protocol의 약자로, 호스트와 라우터들이 정
 3. 다음 set에서는 TTL = 2인 경우를 세 번 보내고, destination에 도착할 때까지 이를 반복한다.
 4. 패킷이 destination에 도착했을 때 수신자는 ICMP 메세지를 반환하지 않기에 송신자는 수신자가 수용할 수 없게 port unreachable를 세팅해서 전송한다.
 5. destination은 port #을 수용하지 못하고, ICMP 메세지를 송신자에게 보낸다.
+
+---
+
+## 🧷 SNMP
+Simple Network Management Protocol의 약자로, 네트워크 장치 간의 구성 및 정보 교환에 사용되는 프로토콜이다. 
+- 스위치, 허브, 라우터, 프린터, 서버와 같은 네트워크 장치 구성 시 사용한다.
+- UDP 기반 프로토콜이다.
 
 ---
 
