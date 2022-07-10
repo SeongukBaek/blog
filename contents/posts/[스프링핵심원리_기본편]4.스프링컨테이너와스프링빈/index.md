@@ -1,8 +1,8 @@
 ---
 title: "📟 4. 스프링 컨테이너와 스프링 빈"
 description: "스프링 핵심 원리 - 기본편 강의 정리"
-date: 2022-07-07
-update: 2022-07-07
+date: 2022-07-11
+update: 2022-07-11
 tags:
   - Java
   - SpringBoot
@@ -52,6 +52,69 @@ ApplicationContext applicationContext = new AnnotationConfigApplicationContext(A
 ---
 
 ## 🎯 컨테이너에 등록된 모든 빈 조회
+스프링 컨테이너에 실제 스프링 빈들이 잘 등록되었는지 확인한다.
+
+```java
+package hello.core.beanFind;
+
+import hello.core.AppConfig;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class ApplicationContextInfoTest {
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+    @Test
+    @DisplayName("모든 빈 출력하기")
+    void findAllBean() {
+        String[] beanDefinitionNames = ac.getBeanDefinitionNames();
+
+        for (String beanDefinitionName : beanDefinitionNames) {
+            Object bean = ac.getBean(beanDefinitionName);
+            System.out.println("name = " + beanDefinitionName + " object = " + bean);
+        }
+    }
+}
+```
+
+- 위와 같은 테스트 코드로 현재 스프링 컨테이너에 등록된 모든 빈들을 확인할 수 있다.
+  - `getBeanDefinitionNames()` 로 스프링에 등록된 모든 빈 이름을 조회할 수 있고, `getBean()` 메소드에 빈 이름을 전달함으로써 빈 객체(인스턴스)를 조회할 수 있다.
+- 하지만 이와 같이 확인하게 되면, 내가 만들지 않고 자동으로 등록된 빈들 또한 출력되기에, 역할에 따라 빈들을 출력해보자.
+
+```java
+package hello.core.beanFind;
+
+import hello.core.AppConfig;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class ApplicationContextInfoTest {
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+    ...
+
+    @Test
+    @DisplayName("애플리케이션 빈 출력하기")
+    void findApplicationBean() {
+        String[] beanDefinitionNames = ac.getBeanDefinitionNames();
+
+        for (String beanDefinitionName : beanDefinitionNames) {
+            BeanDefinition beanDefinition = ac.getBeanDefinition(beanDefinitionName);
+
+            if (beanDefinition.getRole() == BeanDefinition.ROLE_APPLICATION) {
+                Object bean = ac.getBean(beanDefinitionName);
+                System.out.println("name = " + beanDefinitionName + " object = " + bean);
+            }
+        }
+    }
+}
+```
+
+- `getBeanDefinition` 을 통해 해당 빈에 대한 정보를 얻을 수 있다. 
+  - 해당 빈의 역할이 직접 등록한 애플리케이션 빈(`ROLE_APPLICATION`) 또는 스프링이 내부에서 사용하는 빈(`ROLE_INFRASTRUCTURE`)이냐에 따라 나눌 수 있다.
 
 ---
 
