@@ -119,10 +119,283 @@ public class ApplicationContextInfoTest {
 ---
 
 ## 🎯 스프링 빈 조회 - 기본
+스프링 컨테이너에서 스프링 빈을 찾는 가장 기본적인 조회 방법
+- `getBean(빈 이름, 타입)` , `getBean(타입)`
+- 조회 대상 스프링 빈이 없으면 예외가 발생한다.
+  - `NoSuchBeanDefinitionException: No bean named 'xxxxx' available`
+
+```java
+package hello.core.beanFind;
+
+import hello.core.AppConfig;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import static org.assertj.core.api.Assertions.*;
+
+class ApplicationContextBasicFindTest {
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+    @Test
+    @DisplayName("빈 이름으로 조회")
+    void ifnBeanByName() {
+        MemberService memberService = ac.getBean("memberService", MemberService.class);
+
+        assertThat(memberService).isInstanceOf(MemberServiceImpl.class);
+    }
+}
+```
+
+- 빈 이름으로 등록된 빈을 조회했고, 조회한 빈이 `MemberServiceImpl` 의 인스턴스인지 확인하는 테스트 코드를 작성한다.
+
+```java
+package hello.core.beanFind;
+
+import hello.core.AppConfig;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import static org.assertj.core.api.Assertions.*;
+
+class ApplicationContextBasicFindTest {
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+    ...
+
+    @Test
+    @DisplayName("이름 없이 타입으로만 조회")
+    void findBeanByType() {
+        MemberService memberService = ac.getBean(MemberService.class);
+
+        assertThat(memberService).isInstanceOf(MemberServiceImpl.class);
+    }
+}
+```
+
+- 타입으로만 조회도 가능하다. 하지만 같은 타입을 가지는 빈이 여러 개인 경우도 고려해야 한다.
+
+> 현재 두 조회 모두 **인터페이스**로 조회하고 있다. 이를 구체 클래스로 조회해도 가능은 하지만, 이는 역할이 아닌 구현에 의존하는 코드이고, 변경 시 유연성이 떨어지는 단점이 있다.
+
+이제 실패한 경우의 테스트 코드 또한 작성해야 한다.
+
+```java
+package hello.core.beanFind;
+
+import hello.core.AppConfig;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class ApplicationContextBasicFindTest {
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+    ...
+
+    @Test
+    @DisplayName("빈 이름으로 조회 X")
+    void findBeanByNameX() {
+        
+        assertThrows(NoSuchBeanDefinitionException.class, 
+                () -> ac.getBean("xxxxx", MemberService.class));   
+    }
+}
+```
+
+- `assertThrows` 는 `() -> ` 뒤의 로직을 실행했을 때, 앞에 명시한 예외가 발생해야 테스트가 성공함을 assert한다.
 
 ---
 
 ## 🎯 스프링 빈 조회 - 동일한 타입이 둘 이상
+타입으로 조회 시 같은 타입의 스프링 빈이 둘 이상이면 오류가 발생한다. 이때는 빈 이름을 지정한다.
+- `getBeanOfType()` 을 사용하면 해당 타입의 모든 빈을 조회할 수 있다.
+
+```java
+package hello.core.beanFind;
+
+import hello.core.AppConfig;
+import hello.core.discount.DiscountPolicy;
+import hello.core.member.MemberRepository;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import hello.core.member.MemoryMemberRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+public class ApplicationContextSameBeanFindTest {
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(SameBeanConfig.class);
+
+    @Test
+    @DisplayName("타입으로 조회 시 같은 타입이 둘 이상 있으면, 중복 오류가 발생한다.")
+    void findBeanByTypeDuplicate() {
+        MemberRepository memberRepository = ac.getBean(MemberRepository.class);
+    }
+
+    // 동일 타입의 빈을 생성하기 위해 내부에서 생성한 클래스
+    @Configuration
+    static class SameBeanConfig {
+
+        @Bean
+        public MemberRepository memberRepository1() {
+            return new MemoryMemberRepository();
+        }
+
+        @Bean
+        public MemberRepository memberRepository2() {
+            return new MemoryMemberRepository();
+        }
+    }
+}
+```
+
+- 기존의 `AppConfig` 를 수정하지 않고 동일한 타입의 빈을 생성하기 위해 `SameBeanConfig` 클래스를 내부에서 생성하고, 이를 이용해 `ApplicationContext` 를 생성하도록 한다.
+  - 따라서, 스프링 컨테이너는 `MemberRepository` 타입의 빈을 2개 생성한다.
+- 그리고 타입으로 빈을 조회하게 되면, `NoUniqueBeanDefinitionException` 예외가 발생한다.
+
+```java
+@Test
+  @DisplayName("타입으로 조회 시 같은 타입이 둘 이상 있으면, 중복 오류가 발생한다.")
+  void findBeanByTypeDuplicate() {
+      assertThrows(NoUniqueBeanDefinitionException.class,
+              () -> ac.getBean(MemberRepository.class));
+  }
+```
+
+- 위와 같이 예외가 발생함을 assert한다.
+
+```java
+@Test
+@DisplayName("타입으로 조회 시 같은 타입이 둘 이상 있으면, 빈 이름을 지정하면 된다.")
+void findBeanByName() {
+    MemberRepository memberRepository = ac.getBean("memberRepository1", MemberRepository.class);
+    assertThat(memberRepository).isInstanceOf(MemberRepository.class);
+}
+```
+
+- 이전에 한 것과 같이, 빈 이름을 지정하여 특정 빈만 조회할 수 있다.
+
+```java
+@Test
+@DisplayName("특정 타입을 모두 조회하기")
+void findAllBeanByType() {
+    Map<String, MemberRepository> beansOfType = ac.getBeansOfType(MemberRepository.class);
+    for (String key : beansOfType.keySet()) {
+        System.out.println("key = " + key + " value = " + beansOfType.get(key));
+    }
+
+    assertThat(beansOfType.size()).isEqualTo(2);
+}
+```
+
+- 또는 특정 타입의 빈을 모두 조회하는 방법도 있다.
+  - 이때 `getBeansOfType()` 의 반환형은 `Map` 이다.
+
+---
+
+## 🎯 스프링 빈 조회 - 상속 관계
+"부모 타입으로 조회하면, 자식 타입도 함께 조회한다."
+- 그래서 모든 자바 객체의 최고 부모인 `Object` 타입으로 조회하면, 모든 스프링 빈을 조회한다. 
+
+```java
+package hello.core.beanFind;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.discount.FixDiscountPolicy;
+import hello.core.discount.RateDiscountPolicy;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class ApplicationContextExtendsFindTest {
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(TestConfig.class);
+
+    @Test
+    @DisplayName("부모 타입으로 조회 시, 자식이 둘 이상 있으면 중복 오류가 발생한다.")
+    void findBeanByParentTypeDuplicate() {
+
+        assertThrows(NoUniqueBeanDefinitionException.class,
+                () -> ac.getBean(DiscountPolicy.class));
+    }
+
+    @Test
+    @DisplayName("부모 타입으로 조회 시, 자식이 둘 이상 있으면 빈 이름을 지정하면 된다.")
+    void findBeanByParentTypeBeanName() {
+        DiscountPolicy rateDiscountPolicy = ac.getBean("rateDiscountPolicy", DiscountPolicy.class);
+
+        assertThat(rateDiscountPolicy).isInstanceOf(RateDiscountPolicy.class);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public DiscountPolicy rateDiscountPolicy() {
+            return new RateDiscountPolicy();
+        }
+
+        @Bean
+        public DiscountPolicy fixDiscountPolicy() {
+            return new FixDiscountPolicy();
+        }
+    }
+}
+```
+
+- 부모 타입으로 조회 시, 모든 자식 타입도 조회된다. 이때 자식이 둘 이상 있으면 중복 오류가 발생할 것이고, 빈 이름을 지정함으로써 이를 해결할 수 있다.
+
+```java
+@Test
+@DisplayName("부모 타입으로 모두 조회하기")
+void findAllBeanByParentType() {
+    Map<String, DiscountPolicy> beansOfType = ac.getBeansOfType(DiscountPolicy.class);
+    for (String key : beansOfType.keySet()) {
+        System.out.println("key = " + key + " value=" + beansOfType.get(key));
+    }
+    assertThat(beansOfType.size()).isEqualTo(2);
+}
+
+@Test
+@DisplayName("부모 타입으로 모두 조회하기 - Object")
+void findAllBeanByObjectType() {
+    Map<String, Object> beansOfType = ac.getBeansOfType(Object.class);
+    for (String key : beansOfType.keySet()) {
+        System.out.println("key = " + key + " value=" +
+                beansOfType.get(key));
+    } 
+}
+```
+
+- 최고 부모 타입인 `Object` 로 조회하면, 등록된 모든 빈들을 조회할 수 있다.
+  - 자바의 객체는 모두 `Object` 이기 때문이다.
 
 ---
 
