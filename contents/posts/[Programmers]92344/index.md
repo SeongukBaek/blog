@@ -4,7 +4,7 @@ description: "알고리즘 문제 풀기"
 date: 2022-07-17
 update: 2022-07-17
 tags:
-  - 
+  - 누적합
 series: "👩‍💻 Programmers"
 ---
 
