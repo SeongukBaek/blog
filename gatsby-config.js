@@ -79,6 +79,14 @@ module.exports = {
             },
           },
           {
+            resolve: `gatsby-remark-highlight-code`,
+            options: {
+              lineNumbers: true,
+              terminal: "carbon",
+              theme: "a11y-dark", 
+            },
+          },
+          {
             resolve: `gatsby-remark-prismjs`,
             options: {
               classPrefix: "language-",

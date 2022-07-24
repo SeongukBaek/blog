@@ -4,6 +4,7 @@ import Header from "./Header"
 import Series from "./Series"
 import Body from "./Body"
 import Footer from "./Footer"
+import { defineCustomElements as deckDeckGoHighlightElement } from "@deckdeckgo/highlight-code/dist/loader";
 
 const Article = styled.article`
     border-radius: 10px;
@@ -18,5 +19,7 @@ Article.Header = Header
 Article.Series = Series
 Article.Body = Body
 Article.Footer = Footer
+
+deckDeckGoHighlightElement();
 
 export default Article
