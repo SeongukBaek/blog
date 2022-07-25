@@ -185,6 +185,10 @@ const StyledMarkdown = styled.div`
     font-size: 14.4px;
   }
 
+  deckgo-highlight-code {
+    --deckgo-highlight-code-font-size: 14px;
+  }
+
   & img {
     display: block;
     margin-left: auto;
