@@ -1,8 +1,8 @@
 ---
 title: "📟 7. 의존관계 자동 주입"
 description: "스프링 핵심 원리 - 기본편 강의 정리"
-date: 2022-07-23
-update: 2022-07-23
+date: 2022-07-24
+update: 2022-07-24
 tags:
   - Java
   - SpringBoot
@@ -135,11 +135,135 @@ discountPolicy) {
 ---
 
 ## 🎯 옵션 처리
-### 🪔 
+주입할 스프링 빈이 없어도 동작해야 할 때가 있다. 하지만 `@Autowired` 만 사용하면 `required` 옵션의 기본 값이 `true` 여서 자동 주입 대상이 없으면 오류가 발생한다.
+
+자동 주입 대상을 옵션으로 처리하는 방법은 다음과 같다.
+- `@Autowired(required = false)` : 자동 주입할 대상이 없으면 수정자 메소드 자체가 호출되지 않음
+- `org.springframework.lang.@Nullable` : 자동 주입할 대상이 없으면 null이 입력된다.
+- `Optional<>` : 자동 주입할 대상이 없으면 `Optional.empty` 가 입력된다.
+
+```java
+package hello.core.autowired;
+
+import hello.core.member.Member;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.lang.Nullable;
+
+import java.util.Optional;
+
+public class AutowiredTest {
+
+    @Test
+    void autowiredOption() {
+        ApplicationContext ac = new AnnotationConfigApplicationContext(TestBean.class);
+
+    }
+
+    static class TestBean {
+
+        @Autowired(required = false)
+        public void setNoBean1(Member member) {
+            System.out.println("member = " + member);
+        }
+
+        @Autowired
+        public void setNoBean2(@Nullable Member member) {
+            System.out.println("member = " + member);
+        }
+        
+        @Autowired
+        public void setNoBean3(Optional<Member> member) {
+            System.out.println("member = " + member);
+        }
+    }
+
+}
+
+// 출력 결과
+(호출 안됨)
+member = null
+member = Optional.empty
+```
+
+- **`Member` 는 스프링 빈이 아니다.**
+
+> `@Nullable` , `Optional` 은 스프링 전반에 결쳐 지원된다. 생성자 자동 주입에서 특정 필드에만 사용해도 된다.
 
 ---
 
 ## 🎯 생성자 주입을 선택해라!
+과거에는 수정자 주입과 필드 주입을 많이 했다. 하지만 최근에는 스프링 뿐 아니라 다른 DI 프레임워크 또한 생성자 주입을 권장한다. 그 이유는 다음과 같다.
+
+### 🪔 불변
+- 대부분의 의존관계 주입은 한 번 일어나면, 애플리케이션 종료시점까지 변경할 일이 없다. 오히려 변경되어선 안된다.
+- 수정자 주입을 사용하면, setter 메소드를 `public` 으로 열어둬야 한다.
+  - 이는 누군가 실수로 변경할 우려도 있고, 변경하면 안되는 메소드를 열어두는 것은 좋은 설계 방법이 아니다.
+- 생성자 주입은 객체를 생성할 때 딱 1번만 호출되기에 불변하게 설계할 수 있다!
+
+### 🪔 누락
+- 프레임워크 없이 순수한 자바 코드를 단위 테스트하는 경우, 다음과 같인 수정자 의존관계인 경우가 있다고 가정한다.
+
+```java
+public class OrderServiceImpl implements OrderService {
+
+    private MemberRepository memberRepository;
+    private DiscountPolicy discountPolicy;
+
+    @Autowired
+    public void setMemberRepository(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    @Autowired
+    public void setDiscountPolicy(DiscountPolicy discountPolicy) {
+        this.discountPolicy = discountPolicy;
+    }
+
+}
+```
+
+```java
+@Test
+void createOrder() {
+    OrderServiceImpl orderService = new OrderServiceImpl();
+    orderService.createOrder(1L, "itemA", 10000);
+}
+```
+
+- 실행하면, `NullPointerException` 이 발생한다.
+  - 이유는 `memberRepository` 와 `discountPolicy` 에 대한 의존관계 주입이 누락되었기 때문이다. (프레임워크 없이 테스트하게 되면 의존관계 자동 주입이 수행되지 않음!)
+
+생성자 주입을 사용하면 주입 데이터를 누락했을 때 **컴파일 오류**가 발생한다. 
+
+### 🪔 final 키워드
+
+> `final` : 초기화 후 값이 변하지 않는다.
+
+생성자 주입을 사용하면 필드에 `final` 키워드를 사용할 수 있다. 그래서 생성자에서 혹시라도 값이 설정되지 않는 오류를 컴파일 시점에 막아준다.
+
+```java
+@Component
+public class OrderServiceImpl implements OrderService {
+
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;
+@Autowired
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy
+discountPolicy) {
+        this.memberRepository = memberRepository;
+    }
+
+    //...
+}
+```
+
+- 필수 필드인 `discountPolicy` 에 값을 설정해야 하는데, 이 부분이 누락되었다. 자바는 컴파일 시점에 `final` 키워드가 붙어있는 `discountPolicy` 에 대해 다음 오류를 발생시킨다.
+  - `java: variable discountPolicy might not have been initialized`
+
+> 수정자 주입을 포함한 나머지 주입 방식은 모두 생성자 이후에 호출되기에, 필드에 `final` 키워드를 사용할 수 없다. 오직 생성자 주입 방식만 `final` 키워드를 사용할 수 있다.
 
 ---
 
@@ -168,7 +292,7 @@ discountPolicy) {
 ## 🎯 자동, 수동의 올바른 실무 운영 기준
 
 ## 📌 중요한 개념
-
+의존관계 주입, 주입 방법 4가지
 
 ## 📕 참고
 - [스프링 핵심 원리 - 기본편](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%ED%95%B5%EC%8B%AC-%EC%9B%90%EB%A6%AC-%EA%B8%B0%EB%B3%B8%ED%8E%B8/dashboard)
