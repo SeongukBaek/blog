@@ -335,6 +335,7 @@ public class AppConfig {
 **검증 용도의 테스트 코드 추가**
 - `memberService` 와 `orderService` 에서 생성하는 `memberRepository` 의 구체 클래스가 같은 것처럼 보인다.
 - 따라서 두 구현 클래스에서 테스트 용으로 `MemberRepository` 를 조회할 수 있는 메소드를 추가한다.
+
 ```java
 package hello.core.member;
 
@@ -351,7 +352,6 @@ public class MemberServiceImpl implements MemberService {
 //
 
 package hello.core.order;
-
 
 public class OrderServiceImpl implements OrderService {
 
