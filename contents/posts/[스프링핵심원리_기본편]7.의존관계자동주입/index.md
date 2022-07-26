@@ -268,16 +268,122 @@ discountPolicy) {
 ---
 
 ## 🎯 롬복과 최신 트렌드
+실제 개발을 해보면, 대부분이 다 불변이고, 그래서 다음과 같이 생성자에 `final` 키워드를 사용하게 된다. 그런데 생성자도 만들고 주입 받은 값을 대입하는 코드도 만들고, 조금 과정이 귀찮은 듯하다.
+- 필드 주입처럼 좀 편리하게 사용하는 방법은 없을까?
 
-### 🪔 
+**기본 코드**
+```java
+@Component
+    public class OrderServiceImpl implements OrderService {
+        private final MemberRepository memberRepository;
+        private final DiscountPolicy discountPolicy;
+        
+        @Autowired
+        public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy
+    discountPolicy) {
+            this.memberRepository = memberRepository;
+            this.discountPolicy = discountPolicy;
+        }
+}
+```
+
+- 생성자가 1개라면, `@Autowired` 를 생략할 수 있다.
+- 이후 **롬복**이라는 라이브러리를 적용해보자!
+
+```java
+plugins {
+	id 'org.springframework.boot' version '2.7.1'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'hello'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+//lombok 설정 추가 시작
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+//lombok 설정 추가 끝
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	//lombok 라이브러리 추가 시작
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	//lombok 라이브러리 추가 끝
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+```
+
+- 롬복 라이브러리를 사용하기 위해 의존성을 추가해준다.
+- 롬복의 대표적인 기능은 어노테이션을 통해 getter & setter 자동 생성, 생성자 관련 지원 기능이 있다.
+
+이제 롬복을 적용하여, `@RequiredArgsConstructor` 어노테이션을 사용해 `final` 키워드가 붙은 필드에 대한 생성자를 만들어주도록 한다.
+
+```java
+package hello.core.order;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.member.Member;
+import hello.core.member.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+@RequiredArgsConstructor
+@Component
+public class OrderServiceImpl implements OrderService {
+
+    // 회원을 찾기 위해 필요
+    private final MemberRepository memberRepository;
+    // 할인 정책 사용을 위해 필요
+    private final DiscountPolicy discountPolicy;
+
+    @Override
+    public Order createOrder(Long memberId, String itemName, int itemPrice) {
+        Member member = memberRepository.findById(memberId);
+        // 할인에 대해서는 createOrder는 아예 알지 못함, 단일 책임 원칙을 잘 지킨 예
+        int discountPrice = discountPolicy.discount(member, itemPrice);
+
+        return new Order(memberId, itemName, itemPrice, discountPrice);
+    }
+}
+```
+
+- 이전의 코드와 최종 코드는 완전히 동일하다. 롬복이 자바의 **Annotation processor**r라는 기능을 이용해 **컴파일 시점**에 생성자 코드를 자동으로 생성해준다.
 
 --- 
 
 ## 🎯 조회 빈이 2개 이상 - 문제
+`@Autowired` 는 타입으로 조회한다.
+- 따라서 다음 코드와 유사하게 동작한다. (실제로는 더 많은 기능을 제공!)
+  - `ac.getBean(DiscountPolicy.class)`
+
+스프링 빈 조회에서 배웠듯, 타입으로 조회 시 선택된 빈이 2개 이상이면 문제가 발생한다.
+- `NoUniqueBeanDefinitionException` 예외 발생
+- 이를 해결하기 위해, 하위 타입으로 지정하여 특정 빈만을 조회할 수는 있지만 이는 DIP를 위배하고 유연성을 떨어뜨리는 행위다.
+- 또한 이름만 다르고, 완전히 동일한 타입의 스프링 빈이 2개 있을 때 해결되지 않는다.
+
+> 스프링 빈을 수동 등록하여 문제를 해결할 수도 있지만, 의존관계 자동 주입에서 해결하는 여러 방법도 있다. 이는 아래에서 다룬다.
 
 --- 
 
 ## 🎯 @Autowired 필드 명, @Qualifier, @Primary
+### 🪔 
 
 --- 
 
