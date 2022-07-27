@@ -383,11 +383,162 @@ public class OrderServiceImpl implements OrderService {
 --- 
 
 ## 🎯 @Autowired 필드 명, @Qualifier, @Primary
-### 🪔 
+조회 대상 빈이 2개 이상 일 떄 해결방법을 하나씩 알아본다. 
+- `@Autowired` 필드 명 매칭
+- `@Qualifier` -> `@Qualifier` 끼리 매칭 -> 빈 이름 매칭
+- `@Primary` 사용
+
+### 🪔 @Autowired 필드 명 매칭
+`@Autowired` 는 타입 매칭을 시도하고, 이때 여러 빈이 있으면 필드 이름(파라미터 이름)으로 빈 이름을 추가 매칭한다.
+
+**기존 코드(필드 주입)**
+```java
+@Autowired
+private final DiscountPolicy discountPolicy;
+```
+
+**필드 명을 빈 이름으로 변경**
+```java
+@Autowired
+private final DiscountPolicy rateDiscountPolicy;
+```
+
+- 필드 명이 `rateDiscountPolicy` 이므로 정상 주입된다.
+
+> 필드 명 매칭은 먼저 타입 매칭을 시도하고, 그 결과에 여러 빈이 있을 때 추가로 동작하는 기능이다.
+
+### 🪔 @Qualifier 사용
+`@Qualifier` 는 추가 구분자를 붙여주는 방법이다. 주입 시 추가적인 방법을 제공하는 것이지, 빈 이름을 변경하는 것은 아니다.
+
+**빈 등록시 @Qualifierㄹ르 붙여준다.**
+```java
+@Component
+@Qualifier("mainDiscountPolicy")
+public class RateDiscountPolicy implements DiscountPolicy {
+    ...
+}
+```
+
+```java
+@Component
+@Qualifier("fixDiscountPolicy")
+public class FixDiscountPolicy implements DiscountPolicy {
+    ...
+}
+```
+
+**이후 주입 시에 @Qualifier를 붙여주고 등록한 이름을 적는다.**
+```java
+@Autowired
+public OrderServiceImpl(MemberRepository memberRepository,
+                        @Qualifier("mainDiscountPolicy") DiscountPolicy
+discountPolicy) {
+    this.memberRepository = memberRepository;
+    this.discountPolicy = discountPolicy;
+}
+```
+
+`@Qualifier` 로 주입할 때, `@Qualifier("mainDiscountPolicy")` 를 못 찾으면 어떻게 될까?
+- 그러면 `mainDiscountPolicy` 라는 이름의 스프링 빈을 추가로 찾는다.
+  - 하지만 이는 경험상 좋은 사용은 아니다.
+
+또한 직접 빈 등록 시에도 `@Qualifier` 를 동일하게 사용할 수 있다.
+```java
+@Bean
+@Qualifier("mainDiscountPolicy")
+public DiscountPolicy discountPolicy() {
+    ...
+}
+```
+
+### 🪔 @Primary 사용
+이는 우선순위를 정하는 방법이다. 여러 빈이 매칭되면 `@Primary` 가 우선권을 가진다.
+
+**rateDiscountPolicy가 우선권**
+```java
+@Component
+@Primary
+public class RateDiscountPolicy implements DiscountPolicy {}
+
+@Component 
+public class FixDiscountPolicy implements DiscountPolicy {}
+```
+
+`@Qualifier` 의 단점은 주입 받을 때 모든 코드에 `@Qualifier` 를 붙여줘야 한다는 점이다. 반면에 `@Primary` 를 사용하면 우선순위를 가질 클래스에만 이를 붙여주면 된다.
+
+**@Primary와 @Qualifier의 우선순위**
+- `@Primary` 는 기본값처럼 동작하고, `@Qualifier` 는 매우 상세하게 동작한다.
+- 스프링은 자동보다는 수동이, 넓은 범위의 선택권보다는 좁은 범위의 선택권이 우선 순위가 높다.
+  - 즉, `@Qualifier` 의 우선순위가 더 높다.
 
 --- 
 
 ## 🎯 어노테이션 직접 만들기
+`@Qualifier("mainDiscountPolicy")` 이렇게 **문자를 적으면 컴파일시 타입 체크가 안된다.**
+- 이는 어노테이션을 만들어 해결할 수 있다.
+
+```java
+package hello.core.annotation;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.lang.annotation.*;
+
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Documented
+@Qualifier("mainDiscountPolicy")
+public @interface MainDiscountPolicy {
+}
+```
+
+```java
+package hello.core.discount;
+
+import hello.core.annotation.MainDiscountPolicy;
+import hello.core.member.Grade;
+import hello.core.member.Member;
+import org.springframework.stereotype.Component;
+
+@Component
+@MainDiscountPolicy
+public class RateDiscountPolicy implements DiscountPolicy {
+
+    private int discountPercent = 10;
+    @Override
+    public int discount(Member member, int price) {
+        if (member.getGrade() == Grade.VIP)
+            return price * discountPercent / 100;
+        return 0;
+    }
+}
+```
+
+이후 사용할 때도 해당 어노테이션을 명시한다.
+
+```java
+package hello.core.order;
+
+@Component
+public class OrderServiceImpl implements OrderService {
+
+    // 회원을 찾기 위해 필요
+    private final MemberRepository memberRepository;
+    // 할인 정책 사용을 위해 필요
+    private final DiscountPolicy discountPolicy;
+
+    @Autowired
+    public OrderServiceImpl(MemberRepository memberRepository, @MainDiscountPolicy DiscountPolicy discountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+    }
+
+    ...
+}
+```
+
+**어노테이션에는 상속이라는 개념이 없다.** 이렇게 어노테이션을 모아서 사용하는 기능은 스프링이 지원해주는 기능이다.
 
 --- 
 
